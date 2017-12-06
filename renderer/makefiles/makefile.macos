@@ -1,0 +1,10 @@
+
+CXX ?= clang++
+
+PYTHON_CONFIG ?= python-config
+SOFLAGS = $(shell $(PYTHON_CONFIG) --includes --ldflags)
+
+LIBS := glfw3 libpng
+LDFLAGS += -framework OpenGL
+
+include makefiles/makefile.checkfind.macos

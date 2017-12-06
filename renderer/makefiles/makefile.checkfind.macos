@@ -1,0 +1,11 @@
+
+FIND.INSTALLED = $(shell test -f /usr/local/bin/find && echo 1)
+ifneq ($(FIND.INSTALLED), 1)
+$(error "Have you `brew install findutils --with-default-names` ?")
+endif
+
+FIND.GNU = $(shell find -version > /dev/null 2>&1 && echo 1)
+ifneq ($(FIND.GNU), 1)
+FIND.LOC = $(shell which find)
+$(error Have you added /usr/local/bin to PATH? find is now $(FIND.LOC))
+endif

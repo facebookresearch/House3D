@@ -1,0 +1,7 @@
+
+CXX ?= g++
+
+PYTHON_CONFIG ?= python-config
+SOFLAGS = $(shell $(PYTHON_CONFIG) --includes --ldflags)
+
+LIBS := gl egl x11 libpng glfw3

@@ -1,0 +1,12 @@
+
+CXX ?= clang++
+
+PYTHON_CONFIG ?= python-config
+# mac conda need --libs in python-config
+SOFLAGS = $(shell $(PYTHON_CONFIG) --includes --libs)
+SOFLAGS += -L$(shell $(PYTHON_CONFIG) --prefix)/lib
+
+LIBS := glfw3 libpng
+LDFLAGS += -framework OpenGL
+
+include makefiles/makefile.checkfind.macos
