@@ -15,6 +15,7 @@ setup(
     include_package_data=True,
     package_data={'House3D': ['objrender.so', 'metadata/*.csv']},
     install_requires=[
-        "gym"
+        "gym",
+        "numpy"
     ]
 )
