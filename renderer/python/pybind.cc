@@ -33,7 +33,8 @@ PYBIND11_PLUGIN(objrender) {
     .def("loadSceneSUNCG", &SUNCGRenderAPI::loadScene)
     .def("loadScene", &SUNCGRenderAPI::loadScene)
     .def("resolution", &SUNCGRenderAPI::resolution)
-    .def("render", &SUNCGRenderAPI::render);
+    .def("render", &SUNCGRenderAPI::render)
+    .def("renderCubeMap", &SUNCGRenderAPI::renderCubeMap);
 
 
   py::class_<SUNCGRenderAPIThread>(m, "RenderAPIThread")
@@ -45,7 +46,8 @@ PYBIND11_PLUGIN(objrender) {
     .def("loadSceneSUNCG", &SUNCGRenderAPIThread::loadScene)
     .def("loadScene", &SUNCGRenderAPIThread::loadScene)
     .def("resolution", &SUNCGRenderAPIThread::resolution)
-    .def("render", &SUNCGRenderAPIThread::render);
+    .def("render", &SUNCGRenderAPIThread::render)
+    .def("renderCubeMap", &SUNCGRenderAPIThread::renderCubeMap);
 
   auto camera = py::class_<Camera>(m, "Camera")
     .def("shift", &Camera::shift)

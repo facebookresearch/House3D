@@ -38,3 +38,4 @@ Matuc cvt_f2uc(const Mat32f& mat);
 // in-place vertical flip
 void vflip(Matuc& mat);
 
+Matuc hconcat(std::vector<Matuc>& srcs);

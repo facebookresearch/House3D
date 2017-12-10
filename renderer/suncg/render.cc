@@ -42,6 +42,40 @@ Matuc SUNCGRenderAPI::render() {
   }
 }
 
+
+Matuc SUNCGRenderAPI::renderCubeMap() {
+  float prev_fov = camera_->vertical_fov;
+  float prev_pitch = camera_->pitch;
+  camera_->pitch = 0.f;
+  camera_->vertical_fov = 90.f;
+
+  // Start with back view
+  std::vector<Matuc> faces;
+  camera_->turn(180.f, 0.f);
+  faces.push_back(render());
+
+  // Render left, front, and right views
+  for (int i = 1; i < 4; i++) {
+    camera_->turn(90.f, 0.f);
+    faces.push_back(render());
+  }
+  camera_->turn(-90.f, 0.f);
+
+  // Render the top and bottom views
+  camera_->turn(0.f, 89.f);
+  faces.push_back(render());
+
+  camera_->turn(0.f, 2 * -89.f);
+  faces.push_back(render());
+
+  // Reset camera
+  camera_->vertical_fov = prev_fov;
+  camera_->pitch = prev_pitch;
+  camera_->updateDirection();
+
+  return hconcat(faces);
+}
+
 void SUNCGRenderAPI::loadScene(
     std::string obj_file, std::string model_category_file,
     std::string semantic_label_file) {

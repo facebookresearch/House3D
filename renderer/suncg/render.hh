@@ -58,6 +58,10 @@ class SUNCGRenderAPI {
     // 255 means this pixel is at infinty depth, and the correspoding first channel is meaningless.
     Matuc render();
 
+    // Render a cube map.  See render() for rendering details.
+    // Cube map orientations are { BACK, LEFT, FORWARD, RIGHT, UP, DOWN }
+    Matuc renderCubeMap();
+
     // Print OpenGL context info.
     void printContextInfo() const { context_->printInfo(); }
 
@@ -125,6 +129,12 @@ class SUNCGRenderAPIThread {
 
     Matuc render() {
       return exec_.execute_sync<Matuc>([=]() { return this->api_->render(); });
+    }
+
+    Matuc renderCubeMap() {
+      return exec_.execute_sync<Matuc>([=]() {
+        return this->api_->renderCubeMap();
+      });
     }
 
   private:
