@@ -17,9 +17,10 @@
 
 namespace {
 const glm::vec3 WORLD_UP{0.f, 1.f, 0.f};
-// TODO change NEAR to 0.01
-const float NEAR = 0.1f,
-            FAR = 100.f;
+// TODO change DEFAULT_NEAR to 0.01
+const float DEFAULT_NEAR = 0.1f,
+            DEFAULT_FAR = 100.f;
+const float DEFAULT_VERTICAL_FOV = 60.f;
 } // namespace
 
 namespace render {
@@ -31,7 +32,8 @@ class Camera {
     glm::vec3 up; // constant?
     glm::vec3 right;
     float yaw, pitch;
-    const float vertical_fov = 60.f;
+    float near, far;
+    float vertical_fov;
 
     enum Movement : char {
         FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN
@@ -39,7 +41,8 @@ class Camera {
 
 
     Camera(glm::vec3 pos, float yaw=-90.f, float pitch=0.f):
-      pos{pos}, up{WORLD_UP}, yaw{yaw}, pitch{pitch} {
+      pos{pos}, up{WORLD_UP}, yaw{yaw}, pitch{pitch}, near{DEFAULT_NEAR},
+      far{DEFAULT_FAR}, vertical_fov{DEFAULT_VERTICAL_FOV} {
         updateDirection();
       }
 
@@ -60,7 +63,7 @@ class Camera {
     glm::mat4 getCameraMatrix(const Geometry& geo) const {
       glm::mat4 projection = glm::perspective(
           glm::radians(vertical_fov),
-          (float)geo.w / geo.h, NEAR, FAR);
+          (float)geo.w / geo.h, near, far);
       glm::mat4 view = getView();
       return projection * view;
     }
