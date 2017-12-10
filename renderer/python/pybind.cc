@@ -54,10 +54,12 @@ PYBIND11_PLUGIN(objrender) {
     .def_readwrite("pos", &Camera::pos)
     .def_readwrite("yaw", &Camera::yaw) // init yaw = -90 --> facing (0,0,1)
     .def_readwrite("pitch", &Camera::pitch) // init pitch = 0
+    .def_readwrite("near", &Camera::near) // init near = 0.1
+    .def_readwrite("far", &Camera::far) // init pitch = 100
+    .def_readwrite("vertical_fov", &Camera::vertical_fov) // init fov = 60
     .def_readonly("front", &Camera::front)  // init front = (0,0,1)
     .def_readonly("right", &Camera::right)
-    .def_readonly("up", &Camera::up)
-    .def_readonly("vertical_fov", &Camera::vertical_fov);
+    .def_readonly("up", &Camera::up);
 
   py::class_<Geometry>(m, "Geometry")
     .def_readonly("w", &Geometry::w)
