@@ -12,7 +12,7 @@ import numpy as np
 import cv2
 import argparse
 
-from House3D import objrender
+from House3D import objrender, create_default_config
 from House3D.objrender import Camera, RenderMode
 
 if __name__ == '__main__':
@@ -23,13 +23,12 @@ if __name__ == '__main__':
     parser.add_argument('--device', type=int, default=0)
     args = parser.parse_args()
 
+    cfg = create_default_config('.')
+
     api = objrender.RenderAPI(args.width, args.height, device=args.device)
     api.printContextInfo()
-    mappingFile =  "../metadata/ModelCategoryMapping.csv"
-    colormapFile =  "../metadata/colormap_fine.csv"
 
-    assert os.path.isfile(mappingFile)
-    api.loadScene(args.obj, mappingFile, colormapFile)
+    api.loadScene(args.obj, cfg['modelCategoryFile'], cfg['colorFile'])
     cam = api.getCamera()
 
     modes = [RenderMode.RGB, RenderMode.SEMANTIC, RenderMode.DEPTH]
