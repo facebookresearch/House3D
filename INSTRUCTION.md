@@ -21,9 +21,9 @@ SUNCG/
 
 ## Installation:
 
-1. Compile the renderer and confirm it works, see [renderer/README.md](renderer/README.md) for compilation details.
+1. Compile the renderer and confirm it works, see [renderer/README.md](renderer) for compilation details.
 
-2. Add `/path/to/House3DRepo` to `PYTHONPATH`. Alternatively, do `pip install --user .` to install House3D.
+2. To be able to `import House3D`, add `/path/to/House3DRepo` to `PYTHONPATH`. Alternatively, run `pip install --user .`.
 
 ## Usage
 
