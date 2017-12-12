@@ -9,6 +9,7 @@
 
 #pragma once
 #include <list>
+#include <vector>
 #include "mat.h"
 #include "utils.hh"
 
@@ -38,3 +39,4 @@ Matuc cvt_f2uc(const Mat32f& mat);
 // in-place vertical flip
 void vflip(Matuc& mat);
 
+Matuc hconcat(std::vector<Matuc>& srcs);

@@ -112,6 +112,25 @@ class Environment():
             self.set_render_mode(backup)
             return ret
 
+
+    def render_cube_map(self, mode=None):
+        """
+        Args:
+            mode (str or enum or None): If None, use the current mode.
+
+        Returns:
+            An image of resolution 6w * h
+        """
+        if mode is None:
+            return np.array(self.api.renderCubeMap(), copy=False)
+        else:
+            backup = self.api_mode
+            self.set_render_mode(mode)
+            ret = np.array(self.api.renderCubeMap(), copy=False)
+            self.set_render_mode(backup)
+            return ret
+
+
     @property
     def resolution(self):
         api_resolution = self.api.resolution()

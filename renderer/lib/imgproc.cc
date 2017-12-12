@@ -130,3 +130,28 @@ void vflip(Matuc& mat) {
   }
   delete[] buf;
 }
+
+Matuc hconcat(std::vector<Matuc>& srcs) {
+  int rows = srcs[0].rows();
+  int channels = srcs[0].channels();
+  int cols = 0;
+  for (Matuc& cur : srcs) {
+    m_assert(cur.rows() == rows);
+    m_assert(cur.channels() == channels);
+    cols += cur.cols();
+  }
+
+  Matuc buf(rows, cols, channels);
+  int offset = 0;
+  for (Matuc& cur : srcs) {
+    int len = cur.cols() * channels;
+    for (int r = 0; r < rows; r++) {
+      auto out = buf.ptr(r, offset);
+      auto in = cur.ptr(r);
+      memcpy(out, in, len);
+    }
+    offset += cur.cols();
+  }
+
+  return buf;
+}
