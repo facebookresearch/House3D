@@ -9,6 +9,7 @@
 
 #pragma once
 #include <list>
+#include <vector>
 #include "mat.h"
 #include "utils.hh"
 

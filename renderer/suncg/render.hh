@@ -58,7 +58,7 @@ class SUNCGRenderAPI {
     // 255 means this pixel is at infinty depth, and the correspoding first channel is meaningless.
     Matuc render();
 
-    // Render a cube map.  See render() for rendering details.
+    // Render a cube map of size 6w * h * c.  See render() for rendering details.
     // Cube map orientations are { BACK, LEFT, FORWARD, RIGHT, UP, DOWN }
     Matuc renderCubeMap();
 

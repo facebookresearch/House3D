@@ -113,13 +113,13 @@ class Environment():
             return ret
 
 
-    def renderCubeMap(self, mode=None):
+    def render_cube_map(self, mode=None):
         """
         Args:
             mode (str or enum or None): If None, use the current mode.
 
         Returns:
-            An image.
+            An image of resolution 6w * h
         """
         if mode is None:
             return np.array(self.api.renderCubeMap(), copy=False)
