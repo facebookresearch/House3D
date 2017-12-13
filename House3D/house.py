@@ -10,6 +10,9 @@ import json
 import csv
 import pickle
 import itertools
+import copy
+
+import pdb
 
 __all__ = ['House']
 
@@ -224,7 +227,9 @@ class House(object):
         print('Generate Target connectivity Map (Default <{}>) ...'.format(self.default_roomTp))
         ts = time.time()
         self.connMapDict = dict()
+        self.roomTypeLocMap = dict()
         self.targetRoomTp = None
+        self.startRoomTp = None
         self.targetRooms = []
         self.connMap = None
         self.inroomDist = None
@@ -444,6 +449,40 @@ class House(object):
         print(' >>>> ConnMap Cached!')
         return True  # room changed!
 
+
+    def _getRoomBounds(self, room):
+        _x1, _, _y1 = room['bbox']['min']
+        _x2, _, _y2 = room['bbox']['max']
+        return self.rescale(_x1, _y1, _x2, _y2)
+
+    """
+    returns a random location of a given room type
+    """
+    def getRandomLocation(self, roomTp):
+        roomTp = roomTp.lower()
+        assert roomTp in ALLOWED_TARGET_ROOM_TYPES, '[House] room type <{}> not supported!'.format(roomTp)
+        # get list of valid locations within the room bounds
+        locations = None
+        if roomTp in self.roomTypeLocMap:
+          locations = self.roomTypeLocMap[roomTp]
+        else:
+            locations = []
+            rooms = self._getRooms(roomTp)
+            for room in rooms:
+                room_bounds = self._getRoomBounds(room)
+                room_locs = self._find_components(*room_bounds, return_largest=True)
+                locations.extend(room_locs)
+            self.roomTypeLocMap[roomTp] = locations
+        # choose random location
+
+        result = None
+        if len(locations) > 0:
+            idx = np.random.choice(len(locations))
+            result = self.to_coor(locations[idx][0], locations[idx][1], True)
+
+        return result
+
+
     """
     cache the shortest distance to all the possible room types
     """
@@ -630,6 +669,26 @@ class House(object):
         if ret < 0:
             return ret
         return ret / self.maxConnDist
+
+
+    """
+    returns all rooms of a given type
+    """
+    def _getRooms(self, roomTp):
+        rooms = [
+            r for r in self.all_rooms
+            if any([_equal_room_tp(tp, roomTp) for tp in r['roomTypes']])
+        ]
+        return rooms
+
+
+    """
+    return whether or not a given room type exists in the house
+    """
+    def hasRoomType(self, roomTp):
+        rooms = self._getRooms(roomTp)
+        return len(rooms) > 0
+
 
     #######################
     # DEBUG functionality #

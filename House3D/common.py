@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 import json
 import os
+from .house import House
 
 def load_config(filename):
     """
@@ -42,3 +43,4 @@ def create_default_config(prefix, colormap='coarse'):
         'prefix': prefix
     }
     return ret
+
