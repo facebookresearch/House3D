@@ -26,6 +26,8 @@ class ObjLoader {
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
+    std::vector<int> shape_ids;
+    int original_shape_count;
 
     ObjLoader(std::string fname) { load(fname); }
 

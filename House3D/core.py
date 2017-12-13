@@ -86,7 +86,8 @@ class Environment():
         mappings = {
                 'rgb': RenderMode.RGB,
                 'depth': RenderMode.DEPTH,
-                'semantic': RenderMode.SEMANTIC }
+                'semantic': RenderMode.SEMANTIC,
+                'instance': RenderMode.INSTANCE }
         if isinstance(mode, six.string_types):
             mode = mode.lower()
             self.api_mode = mappings[mode]

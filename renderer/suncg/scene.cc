@@ -159,14 +159,36 @@ glm::vec3 SUNCGScene::get_color_by_shape_name(const string& name) {
   return background_color_;
 }
 
+std::vector<glm::vec3> SUNCGScene::get_uniform_sampled_colors(int count) {
+  int interval_length = static_cast<int>(pow(256, 3)) / (count + 2);
+  int current_color = interval_length;
+  std::vector<glm::vec3> result;
+
+  for (int i = 0; i < count; i++) {
+    int r = current_color % 256;
+    int g = (current_color / 256) % 256;
+    int b = (current_color / 256 / 256) % 256;
+
+    result.push_back(glm::vec3{r / 255.0, g / 255.0, b / 255.0});
+
+    current_color += interval_length;
+  }
+
+  std::random_shuffle(result.begin(), result.end());
+  return result;
+}
+
 void SUNCGScene::parse_scene() {
   float x = std::numeric_limits<float>::max();
   boxmin_ = {x, x, x};
   x = std::numeric_limits<float>::lowest();
   boxmax_ = {x, x, x};
+  auto rand_instance_colors = get_uniform_sampled_colors(obj_.original_shape_count);
 
-  for (auto& shp : obj_.shapes) {
+  for (int i = 0; i < obj_.shapes.size(); i++) {
+    auto& shp = obj_.shapes[i];
     glm::vec3 label_color = get_color_by_shape_name(shp.name);
+    glm::vec3 instance_color = rand_instance_colors[obj_.shape_ids[i]];
     tinyobj::mesh_t& tmesh = shp.mesh;
     int nr_face = tmesh.num_face_vertices.size();
     auto& matids = tmesh.material_ids;
@@ -176,7 +198,7 @@ void SUNCGScene::parse_scene() {
     int mid = matids[0];
     mesh_.emplace_back();
     // Assume that obj_.materials won't change size any more
-    materials_.emplace_back(MaterialDesc{mid, label_color, 0UL, &obj_.materials[mid]});
+    materials_.emplace_back(MaterialDesc{mid, label_color, instance_color, 0UL, &obj_.materials[mid]});
 
     for (int f = 0; f < nr_face; ++f) {
       auto face = obj_.convertFace(tmesh, f);
@@ -216,10 +238,11 @@ void SUNCGScene::draw() {
       TextureGuard TG{material.texture};
       mesh_[i].draw();
     }
-  } else if (mode_ == RenderMode::SEMANTIC) {
+  } else if (mode_ == RenderMode::SEMANTIC || mode_ == RenderMode::INSTANCE) {
     auto mode = SUNCGShader::RenderMode::CONSTANT;
     for (int i = 0; i < nr_mesh; ++i) {
-      glm::vec3 color = materials_[i].label_color;
+      glm::vec3 color = mode_ == RenderMode::SEMANTIC ?
+        materials_[i].label_color : materials_[i].instance_color;
       glUniform3fv(shader_.Kd_loc, 1, (GLfloat*)&color);
       glUniform1ui(shader_.mode_loc, static_cast<GLuint>(mode));
       mesh_[i].draw();

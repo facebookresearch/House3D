@@ -51,6 +51,12 @@ bool ObjLoader::load(string fname) {
   //   cerr << err << endl;
   // }
 
+  original_shape_count = shapes.size();
+  shape_ids.reserve(shapes.size());
+  for (int i = 0; i < shapes.size(); i++) {
+    shape_ids.push_back(i);
+  }
+
   return true;
 }
 
@@ -97,8 +103,10 @@ TriangleFace ObjLoader::convertFace(
 
 void ObjLoader::split_shapes_by_material() {
   vector<tinyobj::shape_t> new_shapes;
+  vector<int> new_shape_ids;
 
-  for (auto& shp: shapes) {
+  for (int i = 0; i < shapes.size(); i++) {
+    auto& shp = shapes[i];
     tinyobj::mesh_t& tmesh = shp.mesh;
 
     int nr_face = tmesh.num_face_vertices.size();
@@ -129,6 +137,7 @@ void ObjLoader::split_shapes_by_material() {
         new_shapes.emplace_back();
         new_shapes.back().name = shp.name;
         new_mesh = &new_shapes.back().mesh;
+        new_shape_ids.push_back(shape_ids[i]); 
       }
       for (int k = 0; k < 3; ++k)
         new_mesh->indices.emplace_back(tmesh.indices[3 * f + k]);
@@ -139,6 +148,7 @@ void ObjLoader::split_shapes_by_material() {
   }
   print_debug("Split shapes by material: %lu -> %lu\n", shapes.size(), new_shapes.size());
   std::swap(shapes, new_shapes);
+  std::swap(shape_ids, new_shape_ids);
 }
 
 void ObjLoader::sort_by_transparent(const TextureRegistry& tex) {

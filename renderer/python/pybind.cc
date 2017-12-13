@@ -71,6 +71,7 @@ PYBIND11_PLUGIN(objrender) {
     .value("RGB", SUNCGScene::RenderMode::RGB)
     .value("SEMANTIC", SUNCGScene::RenderMode::SEMANTIC)
     .value("DEPTH", SUNCGScene::RenderMode::DEPTH)
+    .value("INSTANCE", SUNCGScene::RenderMode::INSTANCE)
     .export_values();
 
   py::enum_<Camera::Movement>(camera, "Movement")
