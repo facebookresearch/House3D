@@ -12,9 +12,11 @@ import os
 import pdb
 
 from House3D import objrender, Environment, load_config, House
+from House3D.objrender import RenderMode
 
 ROOM_TYPE = 'living_room'
 ROBOT_RAD = 3.0
+MODES = [RenderMode.RGB, RenderMode.SEMANTIC, RenderMode.INSTANCE]
 
 def create_house(houseID, config, robotRadius=0.1):
     print('Loading house {}'.format(houseID))
@@ -32,11 +34,12 @@ def create_house(houseID, config, robotRadius=0.1):
 
 def get_rand_house(cfg):
     house = None
+    houseID = None
     while house is None or not house.hasRoomType(ROOM_TYPE):
         houseID = np.random.choice(os.listdir(cfg['prefix']))
         house = create_house(houseID, cfg, robotRadius=3.0)
         print('Room types available: {}'.format(house.all_roomTypes))
-    return house
+    return (houseID, house)
 
 
 def create_api():
@@ -52,17 +55,18 @@ if __name__ == '__main__':
     api = create_api()
     cfg = load_config('config.json')
 
-    house = get_rand_house(cfg)
+    houseID, house = get_rand_house(cfg)
     env = Environment(api, house, cfg)
     cam = api.getCamera()
+    mode_idx = 0
 
     for t in tqdm.trange(1000):
         reset_random(env, house)
-        mat = env.render_cube_map()
+        mat = cv2.cvtColor(env.render_cube_map(), cv2.COLOR_BGR2RGB)
         cv2.imshow("aaa", mat)
 
         key = cv2.waitKey(0)
-        while key in [ord('h'), ord('l'), ord('s'), ord('n')]:
+        while key in [ord('h'), ord('l'), ord('s'), ord('n'), ord('i')]:
             if key == ord('h'):
                 cam.yaw -= 5
                 cam.updateDirection()
@@ -70,14 +74,17 @@ if __name__ == '__main__':
                 cam.yaw += 5
                 cam.updateDirection()
             elif key == ord('s'):
-                cv2.imwrite("sample.png", mat)
+                cv2.imwrite("{}_mode{}.png".format(houseID, mode_idx), mat)
+            elif key == ord('i'):
+                mode_idx = (mode_idx + 1) % len(MODES)
+                env.set_render_mode(MODES[mode_idx])
             elif key == ord('n'):
-                house = get_rand_house(cfg)
+                houseID, house = get_rand_house(cfg)
                 env = Environment(api, house, cfg)
                 cam = api.getCamera()
                 reset_random(env, house)
 
-            mat = env.render_cube_map()
+            mat = cv2.cvtColor(env.render_cube_map(), cv2.COLOR_BGR2RGB)
             cv2.imshow("aaa", mat)
             key = cv2.waitKey(0)
 

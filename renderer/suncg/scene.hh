@@ -58,7 +58,8 @@ class SUNCGScene : public ObjSceneBase {
     enum class RenderMode {
       RGB = 0,
       SEMANTIC = 1,
-      DEPTH = 2
+      DEPTH = 2,
+      INSTANCE = 3
     };
 
     enum class ObjectNameResolution {
@@ -101,6 +102,7 @@ class SUNCGScene : public ObjSceneBase {
     struct MaterialDesc {
       int id;  // material id in tinyobj
       glm::vec3 label_color;
+      glm::vec3 instance_color;
       GLuint texture;
 
       // doesn't own this pointer
