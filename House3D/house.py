@@ -227,9 +227,8 @@ class House(object):
         print('Generate Target connectivity Map (Default <{}>) ...'.format(self.default_roomTp))
         ts = time.time()
         self.connMapDict = dict()
-        self.roomTypeLocMap = dict()
+        self.roomTypeLocMap = dict()    # roomType -> feasible locations
         self.targetRoomTp = None
-        self.startRoomTp = None
         self.targetRooms = []
         self.connMap = None
         self.inroomDist = None
