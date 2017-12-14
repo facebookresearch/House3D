@@ -24,10 +24,15 @@ class ObjLoader {
   public:
     std::string base_dir;
     tinyobj::attrib_t attrib;
+    // A vector of shapes. Might be more than the number of shapes in the obj,
+    // because we split the shapes based on texture for rendering.
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
+
+    // Has the same length as `shapes`. Map index in `shapes` to its original shape index.
     std::vector<int> shape_ids;
-    int original_shape_count;
+    // Number of shapes originally in the obj.
+    int original_num_shapes;
 
     ObjLoader(std::string fname) { load(fname); }
 

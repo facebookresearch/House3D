@@ -48,6 +48,9 @@ class SUNCGRenderAPI {
     // Render the image. The return format is:
     // For RGB mode, returns a 3-channel RGB image.
     // For semantic mode, returns a 3-channel image. The mapping from color to class is in the CSV.
+    // For instance mode, returns a 3-channel image.
+    //  Each unique color means an instance and the coloring is consistent across different views.
+    //
     // For depth mode, returns a 2-channel image.
     //
     // The first channel contains depth values scaled to (0, 255),

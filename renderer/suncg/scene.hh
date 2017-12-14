@@ -87,7 +87,6 @@ class SUNCGScene : public ObjSceneBase {
     }
 
     glm::vec3 get_color_by_shape_name(const std::string& name);
-    std::vector<glm::vec3> get_uniform_sampled_colors(int count);
 
     RenderMode mode_ = RenderMode::RGB;
     ObjectNameResolution object_name_mode_ = ObjectNameResolution::COARSE;

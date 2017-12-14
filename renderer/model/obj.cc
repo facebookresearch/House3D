@@ -51,7 +51,7 @@ bool ObjLoader::load(string fname) {
   //   cerr << err << endl;
   // }
 
-  original_shape_count = shapes.size();
+  original_num_shapes = shapes.size();
   shape_ids.reserve(shapes.size());
   for (int i = 0; i < shapes.size(); i++) {
     shape_ids.push_back(i);
@@ -105,7 +105,7 @@ void ObjLoader::split_shapes_by_material() {
   vector<tinyobj::shape_t> new_shapes;
   vector<int> new_shape_ids;
 
-  for (int i = 0; i < shapes.size(); i++) {
+  for (size_t i = 0; i < shapes.size(); i++) {
     auto& shp = shapes[i];
     tinyobj::mesh_t& tmesh = shp.mesh;
 
@@ -137,7 +137,7 @@ void ObjLoader::split_shapes_by_material() {
         new_shapes.emplace_back();
         new_shapes.back().name = shp.name;
         new_mesh = &new_shapes.back().mesh;
-        new_shape_ids.push_back(shape_ids[i]); 
+        new_shape_ids.push_back(shape_ids[i]);
       }
       for (int k = 0; k < 3; ++k)
         new_mesh->indices.emplace_back(tmesh.indices[3 * f + k]);

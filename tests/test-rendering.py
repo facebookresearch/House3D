@@ -31,11 +31,12 @@ if __name__ == '__main__':
     api.loadScene(args.obj, cfg['modelCategoryFile'], cfg['colorFile'])
     cam = api.getCamera()
 
-    modes = [RenderMode.RGB, RenderMode.SEMANTIC, RenderMode.DEPTH]
+    modes = [RenderMode.RGB, RenderMode.SEMANTIC, RenderMode.INSTANCE, RenderMode.DEPTH]
     for t in tqdm.trange(10000):
-        api.setMode(modes[t % 3])
+        mode = modes[t % len(modes)]
+        api.setMode(mode)
         mat = np.array(api.render())
-        if t % 3 == 2:
+        if mode == RenderMode.DEPTH:
             infmask = mat[:, :, 1]
             mat = mat[:, :, 0] * (infmask == 0)
         else:
