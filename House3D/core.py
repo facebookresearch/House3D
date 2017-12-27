@@ -96,7 +96,7 @@ class Environment():
             self.api_mode = mode
         self.api.setMode(self.api_mode)
 
-    def render(self, mode=None):
+    def render(self, mode=None, copy=False):
         """
         Args:
             mode (str or enum or None): If None, use the current mode.
@@ -105,16 +105,16 @@ class Environment():
             An image.
         """
         if mode is None:
-            return np.array(self.api.render(), copy=False)
+            return np.array(self.api.render(), copy=copy)
         else:
             backup = self.api_mode
             self.set_render_mode(mode)
-            ret = np.array(self.api.render(), copy=False)
+            ret = np.array(self.api.render(), copy=copy)
             self.set_render_mode(backup)
             return ret
 
 
-    def render_cube_map(self, mode=None):
+    def render_cube_map(self, mode=None, copy=False):
         """
         Args:
             mode (str or enum or None): If None, use the current mode.
@@ -123,11 +123,11 @@ class Environment():
             An image of resolution 6w * h
         """
         if mode is None:
-            return np.array(self.api.renderCubeMap(), copy=False)
+            return np.array(self.api.renderCubeMap(), copy=copy)
         else:
             backup = self.api_mode
             self.set_render_mode(mode)
-            ret = np.array(self.api.renderCubeMap(), copy=False)
+            ret = np.array(self.api.renderCubeMap(), copy=copy)
             self.set_render_mode(backup)
             return ret
 
