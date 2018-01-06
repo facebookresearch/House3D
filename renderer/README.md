@@ -99,6 +99,8 @@ SYSTEM=conda.macos PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make
 
 ## Use
 
+If you are under a SSH session with X forwarding, make sure to `unset DISPLAY` before using.
+
 C++:
 ```
 ./test-rectangle.bin [egl/glx/glfw]		# a small tool to verify that rendering works

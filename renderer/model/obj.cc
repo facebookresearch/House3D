@@ -53,7 +53,7 @@ bool ObjLoader::load(string fname) {
 
   original_num_shapes = shapes.size();
   shape_ids.reserve(shapes.size());
-  for (int i = 0; i < shapes.size(); i++) {
+  for (size_t i = 0; i < shapes.size(); i++) {
     shape_ids.push_back(i);
   }
 

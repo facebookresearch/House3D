@@ -25,21 +25,21 @@ using namespace std;
 #include "strutils.hh"
 
 void __m_assert_check__(bool val, const char *expr, const char *file, const char *func, int line) {
-	if (val)
-		return;
-	c_fprintf(COLOR_RED, stderr, "assertion \"%s\" failed, in %s, (%s:%d)\n",
-			expr, func, file, line);
-	abort();
-	//exit(1);
+  if (val)
+    return;
+  c_fprintf(COLOR_RED, stderr, "assertion \"%s\" failed, in %s, (%s:%d)\n",
+      expr, func, file, line);
+  abort();
+  //exit(1);
 }
 
 
 void __print_debug__(const char *file, const char *func, int line, const char *fmt, ...) {
-	static map<int, string> colormap;
-	if (! colormap[line].length()) {
-		int color = std::hash<int>()(line) % 5;
-		colormap[line] = TERM_COLOR(color);
-	}
+  static map<int, string> colormap;
+  if (! colormap[line].length()) {
+    int color = std::hash<int>()(line) % 5;
+    colormap[line] = TERM_COLOR(color);
+  }
 
 #ifdef _MSC_VER
   std::tr2::sys::path _fbase(file);
@@ -51,14 +51,15 @@ void __print_debug__(const char *file, const char *func, int line, const char *f
   c_fprintf(colormap[line].c_str(), stderr, "[%s@%s:%d] ", func, fbase, line);
   free(fdup);
 
-	va_list ap;
-	va_start(ap, fmt);
-	vfprintf(stderr, fmt, ap);
-	va_end(ap);
+  va_list ap;
+  va_start(ap, fmt);
+  vfprintf(stderr, fmt, ap);
+  va_end(ap);
 }
 
 
 void error_exit(const char *msg) {
-	c_fprintf(COLOR_RED, stderr, "error: %s\n", msg);
-	exit(1);
+  c_fprintf(COLOR_RED, stderr, "error: %s\n", msg);
+  fflush(stderr);
+  exit(1);
 }
