@@ -27,6 +27,8 @@ due to the diverse and large-scale dataset.
 <img src="https://user-images.githubusercontent.com/1381301/33511103-ff5a71b4-d6c9-11e7-8f6d-95cc42e5b4e0.gif" align="middle" width="800" />
 </p>
 
+[paper](https://arxiv.org/abs/1801.02209)
+
 ### B. Embodied QA
 *Abhishek Das, Samyak Datta, Georgia Gkioxari, Stefan Lee, Devi Parikh, Dhruv Batra*
 
@@ -38,7 +40,4 @@ In order to answer, the agent must first intelligently navigate to explore the e
 </p>
 
 
-[project page](http://embodiedqa.org/) | [paper](http://embodiedqa.org/paper.pdf)
-
-
-
+[project page](http://embodiedqa.org/) | [paper](https://arxiv.org/abs/1711.11543)
