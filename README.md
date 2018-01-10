@@ -15,8 +15,8 @@ depth, segmentation masks and top-down 2D map views.
 Usage instructions can be found at [INSTRUCTION.md](INSTRUCTION.md)
 
 ## Existing Research Projects with House3D
+### A. RoomNav ([paper](https://arxiv.org/abs/1801.02209))
 
-### A. RoomNav
 *Yi Wu, Yuxin Wu, Georgia Gkioxari, Yuandong Tian*
 
 In this work we introduce a concept learning task, RoomNav, where an agent is asked to navigate to a destination specified by a high-level concept, e.g. `dining room`.
@@ -27,9 +27,8 @@ due to the diverse and large-scale dataset.
 <img src="https://user-images.githubusercontent.com/1381301/33511103-ff5a71b4-d6c9-11e7-8f6d-95cc42e5b4e0.gif" align="middle" width="800" />
 </p>
 
-[paper](https://arxiv.org/abs/1801.02209)
+### B. Embodied QA ([project page](http://embodiedqa.org/) | [paper](https://arxiv.org/abs/1711.11543))
 
-### B. Embodied QA
 *Abhishek Das, Samyak Datta, Georgia Gkioxari, Stefan Lee, Devi Parikh, Dhruv Batra*
 
 Embodied Question Answering is a new AI task where an agent is spawned at a random location in a 3D environment and asked a natural language question ("What color is the car?").
@@ -38,6 +37,3 @@ In order to answer, the agent must first intelligently navigate to explore the e
 <p align="center">
 <img src="https://user-images.githubusercontent.com/1381301/33509618-f77bf844-d6b7-11e7-850a-b10ba6ef4a68.gif" align="middle" width="800" />
 </p>
-
-
-[project page](http://embodiedqa.org/) | [paper](https://arxiv.org/abs/1711.11543)
