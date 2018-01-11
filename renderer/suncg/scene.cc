@@ -193,7 +193,7 @@ void SUNCGScene::parse_scene() {
   for (size_t i = 0; i < obj_.shapes.size(); i++) {
     auto& shp = obj_.shapes[i];
     glm::vec3 label_color = get_color_by_shape_name(shp.name);
-    glm::vec3 instance_color = rand_instance_colors[obj_.shape_ids[i]];
+    glm::vec3 instance_color = rand_instance_colors[shp.original_index];
     tinyobj::mesh_t& tmesh = shp.mesh;
     int nr_face = tmesh.num_face_vertices.size();
     auto& matids = tmesh.material_ids;
