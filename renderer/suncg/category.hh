@@ -26,13 +26,12 @@ class ModelCategory final {
 
     // remove the shapes matching coarse grained categories
     void filter_category(
-        std::vector<tinyobj::shape_t>& shapes,
+        std::vector<ObjLoader::Shape>& shapes,
         const std::unordered_set<std::string>& categories) {
       shapes.erase(
-          std::remove_if(shapes.begin(),
-            shapes.end(),
+          std::remove_if(shapes.begin(), shapes.end(),
             // remove person from the scene
-            [&](const tinyobj::shape_t& shape) {
+            [&](const ObjLoader::Shape& shape) {
               std::string name = shape.name;
               static std::string prefix = "Model#";
               if (name.substr(0, prefix.size()) != prefix)
@@ -44,9 +43,9 @@ class ModelCategory final {
                   print_debug("Removing %s of class %s\n", shape.name.c_str(), itr->second.c_str());
                   return true;
                 }
-            return false;
+              return false;
             }), shapes.end()
-          );
+      );
     }
 
     std::string get_coarse_grained_class(std::string model_id) {

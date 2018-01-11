@@ -43,7 +43,8 @@ bool ObjLoader::load(string fname) {
 #endif
 
   string err;
-  bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, fname.c_str(), base_dir.c_str());
+  vector<tinyobj::shape_t> tmp_shapes;
+  bool ret = tinyobj::LoadObj(&attrib, &tmp_shapes, &materials, &err, fname.c_str(), base_dir.c_str());
   if (not ret)
     error_exit(err);
   // if (not err.empty()) {
@@ -51,10 +52,12 @@ bool ObjLoader::load(string fname) {
   //   cerr << err << endl;
   // }
 
-  original_num_shapes = shapes.size();
-  shape_ids.reserve(shapes.size());
+  original_num_shapes = tmp_shapes.size();
+  shapes.reserve(tmp_shapes.size());
   for (size_t i = 0; i < shapes.size(); i++) {
-    shape_ids.push_back(i);
+    auto& shp = tmp_shapes[i];
+    shapes.emplace_back(Shape{
+        std::move(shp.mesh), std::move(shp.name), i});
   }
 
   return true;
@@ -102,7 +105,7 @@ TriangleFace ObjLoader::convertFace(
 }
 
 void ObjLoader::split_shapes_by_material() {
-  vector<tinyobj::shape_t> new_shapes;
+  vector<Shape> new_shapes;
   vector<int> new_shape_ids;
 
   for (size_t i = 0; i < shapes.size(); i++) {
@@ -136,8 +139,8 @@ void ObjLoader::split_shapes_by_material() {
         mesh_by_mat[mid] = new_shapes.size();
         new_shapes.emplace_back();
         new_shapes.back().name = shp.name;
+        new_shapes.back().original_index = shp.original_index;
         new_mesh = &new_shapes.back().mesh;
-        new_shape_ids.push_back(shape_ids[i]);
       }
       for (int k = 0; k < 3; ++k)
         new_mesh->indices.emplace_back(tmesh.indices[3 * f + k]);
@@ -148,7 +151,6 @@ void ObjLoader::split_shapes_by_material() {
   }
   print_debug("Split shapes by material: %lu -> %lu\n", shapes.size(), new_shapes.size());
   std::swap(shapes, new_shapes);
-  std::swap(shape_ids, new_shape_ids);
 }
 
 void ObjLoader::sort_by_transparent(const TextureRegistry& tex) {
@@ -161,14 +163,16 @@ void ObjLoader::sort_by_transparent(const TextureRegistry& tex) {
      return tex.is_transparent(m.diffuse_texname);
   };
 
+
+  // Get the sorted indices for the shapes
   std::sort(shapes.begin(), shapes.end(),
-      [this, &is_transparent_material](const tinyobj::shape_t& a, const tinyobj::shape_t& b) -> bool {
+      [this, &is_transparent_material](const Shape& a, const Shape& b) -> bool {
         bool is_a = is_transparent_material(a.mesh.material_ids[0]),
              is_b = is_transparent_material(b.mesh.material_ids[0]);
         if (is_a != is_b)
           return is_b;
         return a.name.compare(b.name) < 0;
-      });
+  });
 }
 
 TextureRegistry::TextureRegistry(
