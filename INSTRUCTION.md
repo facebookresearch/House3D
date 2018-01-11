@@ -2,21 +2,21 @@
 # Usage Instructions
 
 ## SUNCG Dataset
-1. Create obj+mtl files	 following the [instructions in SUNCGToolbox](https://github.com/shurans/SUNCGtoolbox#convert-to-objmtl).
-	Note that the whole dataset is very large. Doing this for dozens or hundreds of houses is fine and probably
-	enough for most tasks.
+1. Create obj+mtl files following the [instructions in SUNCGToolbox](https://github.com/shurans/SUNCGtoolbox#convert-to-objmtl).
+  Note that the whole dataset is very large. Doing this for dozens or hundreds of houses is fine and probably
+  enough for most tasks.
 2. Organize the dataset into this structure:
 
 ```
 SUNCG/
   house
-	  00065ecbdd7300d35ef4328ffe871505/
-		  house.json
-			house.mtl
-			house.obj
-		...
-	texture/
-	  *.jpg
+    00065ecbdd7300d35ef4328ffe871505/
+      house.json
+      house.mtl
+      house.obj
+    ...
+  texture/
+    *.jpg
 ```
 
 ## Installation:
