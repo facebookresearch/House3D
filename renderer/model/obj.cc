@@ -54,10 +54,10 @@ bool ObjLoader::load(string fname) {
 
   original_num_shapes = tmp_shapes.size();
   shapes.reserve(tmp_shapes.size());
-  for (size_t i = 0; i < shapes.size(); i++) {
+  for (size_t i = 0; i < tmp_shapes.size(); i++) {
     auto& shp = tmp_shapes[i];
     shapes.emplace_back(Shape{
-        std::move(shp.mesh), std::move(shp.name), i});
+        std::move(shp.mesh), std::move(shp.name), static_cast<int>(i)});
   }
 
   return true;
