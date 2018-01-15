@@ -23,6 +23,8 @@
 
 namespace render {
 
+// An instance of this class has to be created and used in the same thread.
+// If not, use SUNCGRenderAPIThread.
 class SUNCGRenderAPI {
   public:
     SUNCGRenderAPI(int w, int h, int device)

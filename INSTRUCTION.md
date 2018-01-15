@@ -30,3 +30,7 @@ SUNCG/
 See `tests/test-rendering.py` for usage of rendering API.
 See `tests/test-env.py` for an example use of the environment API.
 Both will give you an agent in the environment with interactive keyboard control.
+
+Some houses have weird structures that may not be suitable for your task.
+In the RoomNav task, we've manually selected a subset of houses that looks "reasonable".
+The list can be found [here](https://github.com/facebookresearch/House3D/releases/download/v0.9/all_houses.json)
