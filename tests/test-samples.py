@@ -10,6 +10,7 @@ import numpy as np
 import os
 import queue
 import time
+import argparse
 
 from House3D import objrender, Environment, MultiHouseEnv, load_config, House
 from House3D.objrender import RenderMode
@@ -24,9 +25,6 @@ ROOM_TYPES = set(['living_room'])
 ROBOT_RAD = 3.0
 RENDER_MODES = [RenderMode.RGB, RenderMode.DEPTH, RenderMode.SEMANTIC, RenderMode.INSTANCE]
 RENDER_NAMES = ['rgb', 'depth', 'semantic', 'instance']
-OUTPUT_DIR = '../data'
-WIDTH = 1024
-HEIGHT = 1024
 
 def create_house(houseID, config, robotRadius=ROBOT_RAD):
     print('Loading house {}'.format(houseID))
@@ -44,7 +42,7 @@ def create_house(houseID, config, robotRadius=ROBOT_RAD):
 
 
 def get_house_dir(houseID):
-    return os.path.join(OUTPUT_DIR, houseID)
+    return os.path.join(args.output, houseID)
 
 
 def gen_rand_house(cfg):
@@ -125,7 +123,7 @@ def house_loader(house_gen, cfg, house_queue, gen_lock):
 def house_renderer(cfg, house_queue, progress_queue):
     while True:
         houseID, house = house_queue.get()
-        api = objrender.RenderAPIThread(w=WIDTH, h=HEIGHT, device=0)
+        api = objrender.RenderAPIThread(w=args.width, h=args.height, device=0)
         env = Environment(api, house, cfg)
         cam = api.getCamera()
 
@@ -151,6 +149,13 @@ def progress_tracker(total, progress_queue):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--output', help='output directory', default='./')
+    parser.add_argument('--width', type=int, default=1024)
+    parser.add_argument('--height', type=int, default=1024)
+    args = parser.parse_args()
+    assert os.path.isdir(args.output)
+
     cfg = load_config('config.json')
     total = len(os.listdir(cfg['prefix']))
     house_gen = gen_rand_house(cfg)
