@@ -463,7 +463,7 @@ class House(object):
         # get list of valid locations within the room bounds
         locations = None
         if roomTp in self.roomTypeLocMap:
-          locations = self.roomTypeLocMap[roomTp]
+            locations = self.roomTypeLocMap[roomTp]
         else:
             locations = []
             rooms = self._getRooms(roomTp)
@@ -480,6 +480,16 @@ class House(object):
             result = self.to_coor(locations[idx][0], locations[idx][1], True)
 
         return result
+
+
+    def getRandomLocationForRoom(self, room_node):
+        room_bounds = self._getRoomBounds(room_node)
+        room_locs = self._find_components(*room_bounds, return_largest=True)
+        if len(room_locs) == 0:
+            return None
+        idx = np.random.choice(len(room_locs))
+        return self.to_coor(room_locs[idx][0], room_locs[idx][1], True)
+
 
 
     """
