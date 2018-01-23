@@ -12,6 +12,8 @@ import queue
 import time
 import argparse
 
+import pdb
+
 from House3D import objrender, Environment, MultiHouseEnv, load_config, House
 from House3D.objrender import RenderMode
 from threading import Thread, Lock
@@ -26,6 +28,19 @@ ROBOT_RAD = 3.0
 RENDER_MODES = [RenderMode.RGB, RenderMode.DEPTH, RenderMode.SEMANTIC, RenderMode.INSTANCE]
 RENDER_NAMES = ['rgb', 'depth', 'semantic', 'instance']
 
+class RestrictedHouse(House):
+    def __init__(self, **kwargs):
+        super(RestrictedHouse, self).__init__(**kwargs)
+
+    def _getRegionsOfInterest(self):
+        result = []
+        for roomTp in set(self.all_desired_roomTypes):
+            rooms = self._getRooms(roomTp)
+            for room in rooms:
+                result.append(self._getRoomBounds(room))
+        return result
+
+
 def create_house(houseID, config, robotRadius=ROBOT_RAD):
     print('Loading house {}'.format(houseID))
     objFile = os.path.join(config['prefix'], houseID, 'house.obj')
@@ -35,9 +50,9 @@ def create_house(houseID, config, robotRadius=ROBOT_RAD):
     if not os.path.isfile(cachefile):
         cachefile = None
 
-    house = House(jsonFile, objFile, config["modelCategoryFile"],
-                  CachedFile=cachefile, GenRoomTypeMap=True,
-                  RobotRadius=robotRadius)
+    house = RestrictedHouse(JsonFile=jsonFile, ObjFile=objFile,
+                            MetaDataFile=config["modelCategoryFile"],
+                            CachedFile=cachefile, RobotRadius=robotRadius)
     return house
 
 
@@ -112,8 +127,8 @@ def house_loader(house_gen, cfg, house_queue, gen_lock):
         house = None
         try:
             house = create_house(houseID, cfg)
-        except:
-            print('!! Error loading house {}'.format(houseID))
+        except Exception as e:
+            print('!! Error loading house {}: {}'.format(houseID, e.what()))
             continue
 
         house_queue.put((houseID, house))
