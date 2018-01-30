@@ -131,7 +131,7 @@ class RoomNavTask(gym.Env):
 
         self.discrete_action = discrete_action
         if discrete_action:
-            self._action_space = spaces.Discrete(12)
+            self._action_space = spaces.Discrete(n_discrete_actions)
         else:
             self._action_space = spaces.Tuple([spaces.Box(0, 1, shape=(4,)), spaces.Box(0, 1, shape=(2,))])
 
