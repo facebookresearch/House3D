@@ -7,6 +7,6 @@ SOFLAGS = $(shell $(PYTHON_CONFIG) --includes --ldflags)
 # include jpeg/png headers from conda
 # don't use pkg-config, but link png directly (will find them from conda)
 INCLUDE_DIR += -I$(shell $(PYTHON_CONFIG) --prefix)/include
-LDFLAGS += -L$(shell $(PYTHON_CONFIG) --prefix)/lib -lpng
+LDFLAGS += -L$(shell $(PYTHON_CONFIG) --prefix)/lib -lpng -lz
 
 LIBS := gl egl x11 glfw3
