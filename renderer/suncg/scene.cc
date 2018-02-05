@@ -214,6 +214,9 @@ void SUNCGScene::parse_scene() {
       }
     }
   }
+  mesh_.shrink_to_fit();
+  obj_.shapes.clear();
+  obj_.shapes.shrink_to_fit();
 }
 
 void SUNCGScene::draw() {

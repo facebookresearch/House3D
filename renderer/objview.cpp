@@ -57,6 +57,7 @@ int main(int argc, char* argv[]) {
   auto& shader = *scene.get_shader();
   shader.use();
 
+
   auto range = scene.get_range();
   auto mid = scene.get_min() + range * 0.5f;
   mid.z += glm::compMax(range);

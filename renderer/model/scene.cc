@@ -92,6 +92,8 @@ void SimpleObjScene::parse_scene() {
       }
     }
   }
+  obj_.shapes.clear();
+  obj_.shapes.shrink_to_fit();
 }
 
 void SimpleObjScene::draw() {
