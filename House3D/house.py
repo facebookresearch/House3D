@@ -461,19 +461,14 @@ class House(object):
         roomTp = roomTp.lower()
         assert roomTp in ALLOWED_TARGET_ROOM_TYPES, '[House] room type <{}> not supported!'.format(roomTp)
         # get list of valid locations within the room bounds
-        locations = None
-        if roomTp in self.roomTypeLocMap:
-            locations = self.roomTypeLocMap[roomTp]
-        else:
-            locations = []
-            rooms = self._getRooms(roomTp)
-            for room in rooms:
-                room_bounds = self._getRoomBounds(room)
-                room_locs = self._find_components(*room_bounds, return_largest=True)
+        locations = []
+        rooms = self._getRooms(roomTp)
+        for room in rooms:
+            room_locs = self._getValidRoomLocations(room)
+            if room_locs and len(room_locs) > 0:
                 locations.extend(room_locs)
-            self.roomTypeLocMap[roomTp] = locations
-        # choose random location
 
+        # choose random location
         result = None
         if len(locations) > 0:
             idx = np.random.choice(len(locations))
@@ -483,13 +478,22 @@ class House(object):
 
 
     def getRandomLocationForRoom(self, room_node):
-        room_bounds = self._getRoomBounds(room_node)
-        room_locs = self._find_components(*room_bounds, return_largest=True)
+        room_locs = self._getValidRoomLocations(room_node)
         if len(room_locs) == 0:
             return None
         idx = np.random.choice(len(room_locs))
         return self.to_coor(room_locs[idx][0], room_locs[idx][1], True)
 
+
+    def _getValidRoomLocations(self, room_node):
+        room_locs = None
+        if room_node['id'] in self.roomTypeLocMap:
+            room_locs = self.roomTypeLocMap[room_node['id']]
+        else:
+            room_bounds = self._getRoomBounds(room_node)
+            room_locs = self._find_components(*room_bounds, return_largest=True)
+            self.roomTypeLocMap[room_node['id']] = room_locs
+        return room_locs
 
 
     """
