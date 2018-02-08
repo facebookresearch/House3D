@@ -203,7 +203,7 @@ class RoomNavTask(gym.Env):
                 self._availCoorsDict[_id][self.house.targetRoomTp] = self.availCoors
             else:
                 self.availCoors = self._availCoorsDict[_id][self.house.targetRoomTp]
-                
+
     @property
     def house(self):
         return self.env.house
@@ -220,6 +220,8 @@ class RoomNavTask(gym.Env):
 
         # reset house
         self.env.reset_house()
+
+        self.house.targetRoomTp = None  # [NOTE] IMPORTANT! clear this!!!!!
 
         # reset target room
         self.reset_target(target=target)  # randomly reset
