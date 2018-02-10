@@ -167,10 +167,9 @@ class House(object):
         self.all_obj = [node for node in level['nodes'] if node['type'].lower() == 'object']
         self.all_rooms = [node for node in level['nodes'] if (node['type'].lower() == 'room') and ('roomTypes' in node)]
         self.all_roomTypes = [room['roomTypes'] for room in self.all_rooms]
-        desired_room_types = ALLOWED_TARGET_ROOM_TYPES
         self.all_desired_roomTypes = []
         self.default_roomTp = None
-        for roomTp in desired_room_types:
+        for roomTp in ALLOWED_TARGET_ROOM_TYPES:
             if any([any([_equal_room_tp(tp, roomTp) for tp in tps]) for tps in self.all_roomTypes]):
                 self.all_desired_roomTypes.append(roomTp)
                 if self.default_roomTp is None: self.default_roomTp = roomTp
@@ -581,13 +580,30 @@ class House(object):
             if gen_debug_map and (self._debugMap is not None):
                 fill_region(self._debugMap, x1, y1, x2, y2, 0.8)
 
+
     def genMovableMap(self):
-        for i in range(self.n_row+1):
-            for j in range(self.n_row+1):
+        roi_bounds = self._getRegionsOfInterest()
+        for roi in roi_bounds:
+            self._updateMovableMap(*roi)
+
+
+    def _updateMovableMap(self, x1, y1, x2, y2):
+        for i in range(x1, x2):
+            for j in range(y1, y2):
                 if self.obsMap[i,j] == 0:
                     cx, cy = self.to_coor(i, j, True)
                     if self.check_occupy(cx,cy):
                         self.moveMap[i,j] = 1
+
+
+    def _getRegionsOfInterest(self):
+        """Override this function for customizing the areas of the map to
+        consider when marking valid movable locations
+        Returns a list of (x1, y1, x2, y2) tuples representing bounding boxes
+        of valid areas.  Coordinates are normalized grid coordinates.
+        """
+        return [(0, 0, self.n_row+1, self.n_row+1)]
+
 
     """
     check whether the *grid* coordinate (x,y) is inside the house
