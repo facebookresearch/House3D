@@ -52,7 +52,7 @@ $(BINS): %.bin: $(OBJS) $(OBJ_DIR)/%.o
 	@echo "[bin] $@ ..."
 	@$(CXX) $^ -o $@ $(CXXFLAGS) $(LDFLAGS)
 
-$(SO): $(OBJS) python/pybind.cc
+$(SO): $(OBJS) python/pybind.cc python/house.cc
 	@echo "[so] $@ ..."
 	@$(CXX) $^ -fPIC -shared -o $@ $(CXXFLAGS) $(LDFLAGS) $(SOFLAGS)
 	@echo "done."

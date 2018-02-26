@@ -24,7 +24,7 @@ pacman -S glfw-x11 libglvnd glm
 
 ### CentOS 7 with Nvidia GPU
 ```bash
-yum install libX11-devel glfw-devel glm-devel mesa-libEGL-devel autoconf automake libtool
+yum install libX11-devel glfw-devel glm-devel mesa-libGL-devel mesa-libEGL-devel libpng-devel libjpeg-devel autoconf automake libtool
 ```
 
 Then, install libglvnd:
@@ -120,3 +120,7 @@ See `test-rendering.py` for its API.
 ## Trouble Shooting
 Run `./debug-build.sh` and include the results in your issues, as well as your
 environment, and how you build.
+
+### Common Issues:
+1. `Assertion "glGetString(GL_VERSION)" FAILED`: try building with libglvnd as mentioned above
+2. `undefined symbol: _ZTVNSt7__cxx1119basic_ostringstreamIcSt11char_traitsIcESaIcEEE` C++ ABI incompatibility.
