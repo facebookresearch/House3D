@@ -24,7 +24,11 @@ RENDER_THREADS = 1
 
 SAMPLES_PER_ROOM = 3
 ROOM_TYPES = set(['living_room'])
-ROBOT_RAD = 1.0
+
+# Not sure what scale this is, it seems like it's not in meters!
+ROBOT_RAD = 0.5
+ROBOT_HEIGHT = 1.0
+
 RENDER_MODES = [RenderMode.RGB, RenderMode.DEPTH, RenderMode.SEMANTIC, RenderMode.INSTANCE]
 RENDER_NAMES = ['rgb', 'depth', 'semantic', 'instance']
 
@@ -53,7 +57,8 @@ def create_house(houseID, config, robotRadius=ROBOT_RAD):
     house = RestrictedHouse(JsonFile=jsonFile, ObjFile=objFile,
                             MetaDataFile=config["modelCategoryFile"],
                             CachedFile=cachefile, RobotRadius=robotRadius,
-                            SetTarget=False)
+                            RobotHeight=ROBOT_HEIGHT, SetTarget=False,
+                            ApproximateMovableMap=True)
     return house
 
 
@@ -111,7 +116,6 @@ def get_valid_rooms(house):
             if tp.lower() in ROOM_TYPES:
                 result.append(room)
                 break
-    print('Valid rooms: {}'.format(len(result)))
     return result
 
 
