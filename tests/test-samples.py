@@ -12,19 +12,19 @@ import queue
 import time
 import argparse
 
-import pdb
-
 from House3D import objrender, Environment, MultiHouseEnv, load_config, House
 from House3D.objrender import RenderMode
 from threading import Thread, Lock
 
+RANDOM_SEED = 0
+
 MAX_QSIZE = 20
 LOADING_THREADS = 10
-RENDER_THREADS = 2
+RENDER_THREADS = 1
 
 SAMPLES_PER_ROOM = 3
 ROOM_TYPES = set(['living_room'])
-ROBOT_RAD = 3.0
+ROBOT_RAD = 1.0
 RENDER_MODES = [RenderMode.RGB, RenderMode.DEPTH, RenderMode.SEMANTIC, RenderMode.INSTANCE]
 RENDER_NAMES = ['rgb', 'depth', 'semantic', 'instance']
 
@@ -34,7 +34,7 @@ class RestrictedHouse(House):
 
     def _getRegionsOfInterest(self):
         result = []
-        for roomTp in set(self.all_desired_roomTypes):
+        for roomTp in ROOM_TYPES:
             rooms = self._getRooms(roomTp)
             for room in rooms:
                 result.append(self._getRoomBounds(room))
@@ -52,7 +52,8 @@ def create_house(houseID, config, robotRadius=ROBOT_RAD):
 
     house = RestrictedHouse(JsonFile=jsonFile, ObjFile=objFile,
                             MetaDataFile=config["modelCategoryFile"],
-                            CachedFile=cachefile, RobotRadius=robotRadius)
+                            CachedFile=cachefile, RobotRadius=robotRadius,
+                            SetTarget=False)
     return house
 
 
@@ -74,7 +75,11 @@ def gen_rand_house(cfg):
 
 def reset_random(env, house, room):
     location = house.getRandomLocationForRoom(room)
+    if not location:
+        return False
+
     env.reset(*location)
+    return True
 
 
 def render_current_location(env, houseID, room_type, index):
@@ -128,7 +133,7 @@ def house_loader(house_gen, cfg, house_queue, gen_lock):
         try:
             house = create_house(houseID, cfg)
         except Exception as e:
-            print('!! Error loading house {}: {}'.format(houseID, e.what()))
+            print('!! Error loading house {}: {}'.format(houseID, e))
             continue
 
         house_queue.put((houseID, house))
@@ -146,7 +151,9 @@ def house_renderer(cfg, house_queue, progress_queue):
         valid_rooms = get_valid_rooms(house)
         for room in valid_rooms:
             for i in range(SAMPLES_PER_ROOM):
-                reset_random(env, house, room)
+                if not reset_random(env, house, room):
+                    print('Unable to sample location for house {}'.format(houseID))
+                    break
                 render_current_location(env, houseID, room['id'], loc_idx)
                 loc_idx += 1
 
@@ -170,6 +177,8 @@ if __name__ == '__main__':
     parser.add_argument('--height', type=int, default=1024)
     args = parser.parse_args()
     assert os.path.isdir(args.output)
+
+    np.random.seed(RANDOM_SEED)
 
     cfg = load_config('config.json')
     total = len(os.listdir(cfg['prefix']))

@@ -33,6 +33,7 @@ def _equal_room_tp(room, target):
             DO NOT swap the order of arguments
     """
     room = room.lower()
+    target = target.lower()
     return (room == target) or \
             ((target == 'bathroom') and (room == 'toilet')) or \
             ((target == 'bedroom') and (room == 'guest_room'))
@@ -113,6 +114,7 @@ class House(object):
                  RobotRadius=0.1,
                  RobotHeight=0.75,  # 1.0,
                  CarpetHeight=0.15,
+                 SetTarget=True,
                  _IgnoreSmallHouse=False  # should be only set true when called by "cache_houses.py"
                  ):
         """Initialization and Robot Parameters
@@ -134,6 +136,7 @@ class House(object):
             RobotRadius (double, optional): radius of the robot/agent (generally should not be changed)
             RobotHeight (double, optional): height of the robot/agent (generally should not be changed)
             CarpetHeight (double, optional): maximum height of the obstacles that agent can directly go through (gennerally should not be changed)
+            SetTarget (bool, optional): whether or not to choose a default target room and pre-compute the valid locations
         """
         ts = time.time()
         print('Data Loading ...')
@@ -174,7 +177,7 @@ class House(object):
                 self.all_desired_roomTypes.append(roomTp)
                 if self.default_roomTp is None: self.default_roomTp = roomTp
         assert self.default_roomTp is not None, 'Cannot Find Any Desired Rooms!'
-        print('>> Target Room Type Selected = {}'.format(self.default_roomTp))
+        print('>> Default Target Room Type Selected = {}'.format(self.default_roomTp))
 
         print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
         if _IgnoreSmallHouse and ((len(self.all_desired_roomTypes) < 2) or ('kitchen' not in self.all_desired_roomTypes)):
@@ -231,7 +234,8 @@ class House(object):
         self.targetRooms = []
         self.connMap = None
         self.inroomDist = None
-        self.setTargetRoom(self.default_roomTp, _setEagleMap=True)
+        if SetTarget:
+            self.setTargetRoom(self.default_roomTp, _setEagleMap=True)
         print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
 
         self.roomTypeMap = None
