@@ -67,9 +67,9 @@ make && make install
 Install EGL headers (the headers in apt is too old):
 ```
 cd INSTALL_DIR
-wget https://www.khronos.org/registry/EGL/api/EGL/egl.h
-wget https://www.khronos.org/registry/EGL/api/EGL/eglext.h
-wget https://www.khronos.org/registry/EGL/api/EGL/eglplatform.h
+wget -P EGL https://www.khronos.org/registry/EGL/api/EGL/egl.h
+wget -P EGL https://www.khronos.org/registry/EGL/api/EGL/eglext.h
+wget -P EGL https://www.khronos.org/registry/EGL/api/EGL/eglplatform.h
 ```
 When compiling the library later, remember to use `INCLUDE_DIR=-I/path/to/INSTALL_DIR make`.
 
