@@ -48,6 +48,13 @@ in vec3 normal;
 in vec2 texcoord;
 out vec4 fragcolor;
 
+// Note these values need to match DEFAULT_NEAR and DEFAULT_FAR in camera.h
+const float NEAR = 0.1f;
+const float FAR  = 100.0f;
+const float INV_NEAR = 1.0f/NEAR;
+const float INV_FAR  = 1.0f/FAR;
+const float DEPTH_SCALE = 20.0f;
+
 uniform uint mode;
 // 0: light + texture
 // 1: light
@@ -58,14 +65,7 @@ uniform vec3 Ka;
 uniform vec3 eye;
 uniform float dissolve;
 uniform sampler2D texture_diffuse;
-
-// TODO change NEAR to 0.01
-// Note these values need to match DEFAULT_NEAR and DEFAULT_FAR in camera.h
-const float NEAR = 0.1f;
-const float FAR  = 100.0f;
-const float INV_NEAR = 1.0f/NEAR;
-const float INV_FAR  = 1.0f/FAR;
-const float DEPTH_SCALE = 20.0f;
+uniform float minDepth = NEAR;
 
 // Convert depth buffer value to inverse depth.
 // The depth buffer value <d> is 0.0 for INV_NEAR, 1.0 for INV_FAR.
@@ -92,7 +92,7 @@ void main() {
       float invDepth = InverseDepth(gl_FragCoord.z);
       // invDepth \in [INV_FAR, INV_NEAR] i.e., [0.01, 10.0] with above values.
       // We convert to 16 bits, with 65535 corresponding to INV_NEAR
-      float f = 65535 * invDepth * NEAR + 0.5; // \in [0.0, 65535.0]
+      float f = 65535 * minDepth * invDepth + 0.5; // \in [0.0, 65535.0]
       float ms = floor(f/256.0f); // \in {0.0, .., 255.0}
       float ls = floor(f - ms * 256.0f); // \in {0.0, .., 255.0}
       fragcolor = vec4(ms/255.0f, ls/255.0f, 0.0f, 1.0f);
@@ -130,15 +130,17 @@ SUNCGShader::SUNCGShader():
   mode_loc = getUniformLocation("mode");
   texture_loc = getUniformLocation("texture_diffuse");
   dissolve_loc = getUniformLocation("dissolve");
+  minDepth_loc = getUniformLocation("minDepth");
   };
 
 
 SUNCGScene::SUNCGScene(string obj_file, string model_category_file,
-    string semantic_label_file):
+    string semantic_label_file, float minDepth):
   ObjSceneBase{obj_file},
   textures_{obj_.materials, obj_.base_dir},
   model_category_{model_category_file},
-  semantic_color_{semantic_label_file}
+  semantic_color_{semantic_label_file},
+  minDepth_{minDepth}
 {
     background_color_ = semantic_color_.get_background_color();
 
@@ -282,6 +284,7 @@ void SUNCGScene::draw() {
   } else if (mode_ == RenderMode::INVDEPTH) {
     auto mode = SUNCGShader::RenderMode::INVDEPTH;
     glUniform1ui(shader_.mode_loc, static_cast<GLuint>(mode));
+    glUniform1f(shader_.minDepth_loc, minDepth_);
     for (int i = 0; i < nr_mesh; ++i)
       mesh_[i].draw();
   } else {

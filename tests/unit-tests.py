@@ -14,7 +14,7 @@ from House3D.objrender import RenderMode
 PIXEL_MAX = np.iinfo(np.uint16).max
 ROOM_TYPE = 'kitchen'
 SIDE = 256
-NEAR = 0.1
+NEAR = 0.3
 
 
 def depth_of_inverse_depth(inverse_depth):
@@ -90,9 +90,9 @@ class TestCubeMap(unittest.TestCase):
         self.assertEqual(depth2.dtype, np.float)
         self.assertEqual(depth2.shape, (SIDE, SIDE * 6))
 
-        # Check that depth value is within 1% of depth from RenderMode.DEPTH
+        # Check that depth value is within 5% of depth from RenderMode.DEPTH
         self.assertAlmostEqual(
-            depth2[0, 0], depth_value, delta=depth_value * 0.01)
+            depth2[0, 0], depth_value, delta=depth_value * 0.05)
 
 
 if __name__ == '__main__':
