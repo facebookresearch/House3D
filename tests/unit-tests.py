@@ -11,8 +11,16 @@ import unittest
 from House3D import objrender, Environment, load_config, House
 from House3D.objrender import RenderMode
 
+PIXEL_MAX = np.iinfo(np.uint16).max
 ROOM_TYPE = 'kitchen'
 SIDE = 256
+NEAR = 0.1
+
+
+def depth_of_inverse_depth(inverse_depth):
+    '''Calculate float depth from int 16-bit int inverse depth.'''
+    assert inverse_depth.dtype == np.uint16
+    return NEAR * PIXEL_MAX / inverse_depth.astype(np.float)
 
 
 def create_house(houseID, config):
@@ -66,8 +74,25 @@ class TestCubeMap(unittest.TestCase):
         # Check DEPTH
         env.set_render_mode(RenderMode.DEPTH)
         depth = env.render_cube_map()
-        self.assertEqual(depth.shape, (SIDE, SIDE * 6, 2))
         self.assertEqual(depth.dtype, np.uint8)
+        self.assertEqual(depth.shape, (SIDE, SIDE * 6, 2))
+        depth_value = depth[0, 0, 0] * 20.0 / 255.0
+
+        # Check INVDEPTH
+        env.set_render_mode(RenderMode.INVDEPTH)
+        invdepth = env.render_cube_map()
+        self.assertEqual(invdepth.dtype, np.uint8)
+        self.assertEqual(invdepth.shape, (SIDE, SIDE * 6, 3))
+
+        # Convert to 16 bit and then to depth
+        id16 = 256 * invdepth[:, :, 0] + invdepth[:, :, 1]
+        depth2 = depth_of_inverse_depth(id16)
+        self.assertEqual(depth2.dtype, np.float)
+        self.assertEqual(depth2.shape, (SIDE, SIDE * 6))
+
+        # Check that depth value is within 1% of depth from RenderMode.DEPTH
+        self.assertAlmostEqual(
+            depth2[0, 0], depth_value, delta=depth_value * 0.01)
 
 
 if __name__ == '__main__':

@@ -37,7 +37,8 @@ class SUNCGShader: public Shader {
       TEXTURE_LIGHTING = 0,
       LIGHTING = 1,
       CONSTANT = 2,
-      DEPTH = 3
+      DEPTH = 3,
+      INVDEPTH = 4
     };
 };
 
@@ -59,7 +60,8 @@ class SUNCGScene : public ObjSceneBase {
       RGB = 0,
       SEMANTIC = 1,
       DEPTH = 2,
-      INSTANCE = 3
+      INSTANCE = 3,
+      INVDEPTH = 4
     };
 
     enum class ObjectNameResolution {
