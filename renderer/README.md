@@ -61,8 +61,8 @@ wget https://github.com/g-truc/glm/releases/download/0.9.8.4/glm-0.9.8.4.zip
 unzip glm-0.9.8.4 && cd glm
 mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=SOME/INSTALL_DIR
 make && make install
-# add INSTALL_DIR/lib/pkgconfig to PKG_CONFIG_PATH
 ```
+Later, remember to compile with `INCLUDE_DIR=-I/path/to/INSTALL_DIR/include make`.
 
 Install EGL headers (the headers in apt is too old):
 ```
@@ -71,7 +71,9 @@ wget -P EGL https://www.khronos.org/registry/EGL/api/EGL/egl.h
 wget -P EGL https://www.khronos.org/registry/EGL/api/EGL/eglext.h
 wget -P EGL https://www.khronos.org/registry/EGL/api/EGL/eglplatform.h
 ```
-When compiling the library later, remember to use `INCLUDE_DIR=-I/path/to/INSTALL_DIR make`.
+Later, remember to compile `INCLUDE_DIR=-I/path/to/INSTALL_DIR make`.
+
+If multiple `INCLUDE_DIR` need to be added, use `INCLUDE_DIR=-I/path/one -I/path/two`.
 
 No need to install libglvnd.
 
