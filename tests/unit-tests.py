@@ -36,7 +36,8 @@ def create_house(houseID, config):
         json_file,
         obj_file,
         config["modelCategoryFile"],
-        CachedFile=cache_file)
+        CachedFile=cache_file,
+        SetTarget=False)
 
 
 def find_first_good_house(cfg):
