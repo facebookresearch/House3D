@@ -109,7 +109,7 @@ def render_current_location(env, houseID, room_type, index):
             img = img[:, :, 0]
         elif render_mode == RenderMode.INVDEPTH:
             img16 = img.astype(np.uint16)
-            img = img16[:, :, 0] * 256 + img16[:, :, 0]
+            img = img16[:, :, 0] * 256 + img16[:, :, 1]
         else:
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
