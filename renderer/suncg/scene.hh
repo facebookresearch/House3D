@@ -31,13 +31,14 @@ class SUNCGShader: public Shader {
 
     static const char* fShader;
     GLint Kd_loc, Ka_loc, mode_loc,
-          texture_loc, dissolve_loc;
+          texture_loc, dissolve_loc, minDepth_loc;
 
     enum class RenderMode : GLuint {
       TEXTURE_LIGHTING = 0,
       LIGHTING = 1,
       CONSTANT = 2,
-      DEPTH = 3
+      DEPTH = 3,
+      INVDEPTH = 4
     };
 };
 
@@ -46,7 +47,8 @@ class SUNCGScene : public ObjSceneBase {
     explicit SUNCGScene(
         std::string obj_file,
         std::string model_category_file,
-        std::string semantic_label_file);
+        std::string semantic_label_file,
+        float minDepth = 0.3);
     ~SUNCGScene() {}
 
     void draw() override;
@@ -59,7 +61,8 @@ class SUNCGScene : public ObjSceneBase {
       RGB = 0,
       SEMANTIC = 1,
       DEPTH = 2,
-      INSTANCE = 3
+      INSTANCE = 3,
+      INVDEPTH = 4
     };
 
     enum class ObjectNameResolution {
@@ -97,7 +100,7 @@ class SUNCGScene : public ObjSceneBase {
     ColorMappingReader semantic_color_;
     glm::vec3 background_color_;
     std::vector<Mesh> mesh_;
-
+    float minDepth_; // used for inverse depth mode
 
     struct MaterialDesc {
       int id;  // material id in tinyobj

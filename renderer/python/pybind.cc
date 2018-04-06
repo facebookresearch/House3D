@@ -73,6 +73,7 @@ PYBIND11_MODULE(objrender, m) {
     .value("SEMANTIC", SUNCGScene::RenderMode::SEMANTIC)
     .value("DEPTH", SUNCGScene::RenderMode::DEPTH)
     .value("INSTANCE", SUNCGScene::RenderMode::INSTANCE)
+    .value("INVDEPTH", SUNCGScene::RenderMode::INVDEPTH)
     .export_values();
 
   py::enum_<Camera::Movement>(camera, "Movement")

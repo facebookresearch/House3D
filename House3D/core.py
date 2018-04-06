@@ -80,14 +80,16 @@ class Environment():
     def set_render_mode(self, mode):
         """
         Args:
-            mode (str or enum): one of 'rgb', 'depth', 'semantic',
-                RenderMode.RGB, RenderMode.DEPTH, RenderMode.SEMANTIC
+            mode (str or enum): either a RenderMode value or its string version.
+                                'rgb', 'depth', 'semantic', 'instance', or 'invdepth'
         """
         mappings = {
-                'rgb': RenderMode.RGB,
-                'depth': RenderMode.DEPTH,
-                'semantic': RenderMode.SEMANTIC,
-                'instance': RenderMode.INSTANCE }
+            'rgb': RenderMode.RGB,
+            'depth': RenderMode.DEPTH,
+            'semantic': RenderMode.SEMANTIC,
+            'instance': RenderMode.INSTANCE,
+            'invdepth': RenderMode.INVDEPTH,
+        }
         if isinstance(mode, six.string_types):
             mode = mode.lower()
             self.api_mode = mappings[mode]
