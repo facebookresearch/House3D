@@ -21,6 +21,8 @@ if __name__ == '__main__':
     parser.add_argument('--width', type=int, default=800)
     parser.add_argument('--height', type=int, default=600)
     parser.add_argument('--device', type=int, default=0)
+    parser.add_argument('--interactive', action='store_true',
+        help='run interactive rendering (does not work under ssh)')
     args = parser.parse_args()
 
     cfg = create_default_config('.')
@@ -41,29 +43,35 @@ if __name__ == '__main__':
             mat = mat[:, :, 0] * (infmask == 0)
         else:
             mat = mat[:, :, ::-1]   # cv expects bgr
-        cv2.imshow("aaa", mat)
-        key = cv2.waitKey(0)
-        if key == 27 or key == ord('q'): #esc
-            break
-        elif key == ord('w'):
-            cam.pos += cam.front * 0.5
-        elif key == ord('s'):
-            cam.pos -= cam.front * 0.5
-        elif key == ord('a') or key == 81:
-            cam.pos -= cam.right * 0.5
-        elif key == ord('d') or key == 83:
-            cam.pos += cam.right * 0.5
-        elif key == ord('h'):
-            cam.yaw -= 5
-            # need to call updateDirection to make the change to yaw/pitch
-            # take effect
-            cam.updateDirection()
-        elif key == ord('l'):
-            cam.yaw += 5
-            cam.updateDirection()
-        elif key == 82:
-            cam.pos += cam.up * 0.5
-        elif key == 84:
-            cam.pos -= cam.up * 0.5
+
+        if args.interactive:
+            cv2.imshow("aaa", mat)
+            key = cv2.waitKey(0)
+            if key == 27 or key == ord('q'): #esc
+                break
+            elif key == ord('w'):
+                cam.pos += cam.front * 0.5
+            elif key == ord('s'):
+                cam.pos -= cam.front * 0.5
+            elif key == ord('a') or key == 81:
+                cam.pos -= cam.right * 0.5
+            elif key == ord('d') or key == 83:
+                cam.pos += cam.right * 0.5
+            elif key == ord('h'):
+                cam.yaw -= 5
+                # need to call updateDirection to make the change to yaw/pitch
+                # take effect
+                cam.updateDirection()
+            elif key == ord('l'):
+                cam.yaw += 5
+                cam.updateDirection()
+            elif key == 82:
+                cam.pos += cam.up * 0.5
+            elif key == 84:
+                cam.pos -= cam.up * 0.5
+            else:
+                print("Unknown key:", key)
         else:
-            print("Unknown key:", key)
+            cv2.imwrite("mode={}.png".format(t), mat)
+            if t == len(modes) - 1:
+                break
