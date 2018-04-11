@@ -23,8 +23,13 @@ LOADING_THREADS = 10
 RENDER_THREADS = 1
 
 SAMPLES_PER_ROOM = 3
-ROOM_TYPES = {'living_room'}
-ROBOT_RAD = 1.0
+ROOM_TYPES = set(['living_room'])
+
+# Not sure what scale this is, it seems like it's not in meters!
+ROBOT_RAD = 0.5
+ROBOT_HEIGHT = 1.0
+
+
 RENDER_MODES = [
     RenderMode.RGB,
     RenderMode.DEPTH,
@@ -33,7 +38,6 @@ RENDER_MODES = [
     RenderMode.INVDEPTH,
 ]
 RENDER_NAMES = ['rgb', 'depth', 'semantic', 'instance', 'invdepth']
-
 
 class RestrictedHouse(House):
     def __init__(self, **kwargs):
@@ -65,7 +69,8 @@ def create_house(houseID, config, robotRadius=ROBOT_RAD):
         MetaDataFile=config["modelCategoryFile"],
         CachedFile=cachefile,
         RobotRadius=robotRadius,
-        SetTarget=False)
+        SetTarget=False,
+        ApproximateMovableMap=True)
     return house
 
 
@@ -125,7 +130,6 @@ def get_valid_rooms(house):
             if tp.lower() in ROOM_TYPES:
                 result.append(room)
                 break
-    print('Valid rooms: {}'.format(len(result)))
     return result
 
 
