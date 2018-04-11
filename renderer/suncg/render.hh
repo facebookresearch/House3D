@@ -47,20 +47,35 @@ class SUNCGRenderAPI {
 
     void setMode(SUNCGScene::RenderMode m) { scene_->set_mode(m); }
 
-    // Render the image. The return format is:
-    // For RGB mode, returns a 3-channel RGB image.
-    // For semantic mode, returns a 3-channel image. The mapping from color to class is in the CSV.
-    // For instance mode, returns a 3-channel image.
-    //  Each unique color means an instance and the coloring is consistent across different views.
+    // Render the image. The return format depends on the rendering mode, which
+    // is set with the method above:
     //
-    // For depth mode, returns a 2-channel image.
+    // For RGB mode, returns a 3-channel RGB image of the rendered scene.
     //
-    // The first channel contains depth values scaled to (0, 255),
-    // where pixel / 255.0 * 20.0 is the true depth in meters.
-    // Any pixels that are further than 20 meters away will be clipped to 20 meters.
+    // For SEMANTIC mode, returns a 3-channel image.
+    //  The mapping from color to class is in the CSV.
     //
-    // The second channel is an "infinity" mask. Each value is either 0 or 255.
-    // 255 means this pixel is at infinty depth, and the correspoding first channel is meaningless.
+    // For INSTANCE mode, returns a 3-channel image.
+    //  Each unique color means an instance and the coloring is consistent
+    //  across different views.
+    //
+    // For DEPTH mode, returns a 2-channel image:
+    //  The first channel contains depth values scaled to (0, 255), where
+    //  pixel / 255.0 * 20.0 is the true depth in meters. Any pixels that are
+    //  further than 20 meters away will be clipped to 20 meters.
+    //  The second channel is an "infinity" mask. Each value is either 0 or 255.
+    //  255 means this pixel is at infinty depth, and the correspoding first
+    //  channel is meaningless.
+    //
+    // INVDEPTH mode also returns a 2-channel image, of 16-bit inverse depth.
+    //  It can be converted to a single uint16 inverse depth image as follows:
+    //    img16 = img.astype(np.uint16)
+    //    inverse_depth_16 = img16[:, :, 0] * 256 + img16[:, :, 1]
+    //  To convert from inverse depth to float depth, you can use:
+    //    PIXEL_MAX = np.iinfo(np.uint16).max
+    //    NEAR = 0.3 # has to match minDepth parameter
+    //    depth = NEAR * PIXEL_MAX / inverse_depth_16.astype(np.float)
+    //
     Matuc render();
 
     // Render a cube map of size 6w * h * c.  See render() for rendering details.
@@ -151,4 +166,3 @@ class SUNCGRenderAPIThread {
 };
 
 }
-

@@ -12,7 +12,7 @@ import queue
 import time
 import argparse
 
-from House3D import objrender, Environment, MultiHouseEnv, load_config, House
+from House3D import objrender, Environment, load_config, House
 from House3D.objrender import RenderMode
 from threading import Thread, Lock
 
@@ -29,8 +29,15 @@ ROOM_TYPES = set(['living_room'])
 ROBOT_RAD = 0.5
 ROBOT_HEIGHT = 1.0
 
-RENDER_MODES = [RenderMode.RGB, RenderMode.DEPTH, RenderMode.SEMANTIC, RenderMode.INSTANCE]
-RENDER_NAMES = ['rgb', 'depth', 'semantic', 'instance']
+
+RENDER_MODES = [
+    RenderMode.RGB,
+    RenderMode.DEPTH,
+    RenderMode.SEMANTIC,
+    RenderMode.INSTANCE,
+    RenderMode.INVDEPTH,
+]
+RENDER_NAMES = ['rgb', 'depth', 'semantic', 'instance', 'invdepth']
 
 class RestrictedHouse(House):
     def __init__(self, **kwargs):
@@ -49,16 +56,21 @@ def create_house(houseID, config, robotRadius=ROBOT_RAD):
     print('Loading house {}'.format(houseID))
     objFile = os.path.join(config['prefix'], houseID, 'house.obj')
     jsonFile = os.path.join(config['prefix'], houseID, 'house.json')
-    assert (os.path.isfile(objFile) and os.path.isfile(jsonFile)), '[Environment] house objects not found! objFile=<{}>'.format(objFile)
+    assert (
+        os.path.isfile(objFile) and os.path.isfile(jsonFile)
+    ), '[Environment] house objects not found! objFile=<{}>'.format(objFile)
     cachefile = os.path.join(config['prefix'], houseID, 'cachedmap1k.pkl')
     if not os.path.isfile(cachefile):
         cachefile = None
 
-    house = RestrictedHouse(JsonFile=jsonFile, ObjFile=objFile,
-                            MetaDataFile=config["modelCategoryFile"],
-                            CachedFile=cachefile, RobotRadius=robotRadius,
-                            RobotHeight=ROBOT_HEIGHT, SetTarget=False,
-                            ApproximateMovableMap=True)
+    house = RestrictedHouse(
+        JsonFile=jsonFile,
+        ObjFile=objFile,
+        MetaDataFile=config["modelCategoryFile"],
+        CachedFile=cachefile,
+        RobotRadius=robotRadius,
+        SetTarget=False,
+        ApproximateMovableMap=True)
     return house
 
 
@@ -69,7 +81,6 @@ def get_house_dir(houseID):
 def gen_rand_house(cfg):
     all_house_ids = os.listdir(cfg['prefix'])
     np.random.shuffle(all_house_ids)
-    house = None
     for houseID in all_house_ids:
         house_dir = get_house_dir(houseID)
         if os.path.exists(house_dir):
@@ -100,12 +111,15 @@ def render_current_location(env, houseID, room_type, index):
         env.set_render_mode(RENDER_MODES[mode_idx])
         img = env.render_cube_map(copy=True)
         if render_mode == RenderMode.DEPTH:
-            img = img[:,:,0]
+            img = img[:, :, 0]
+        elif render_mode == RenderMode.INVDEPTH:
+            img16 = img.astype(np.uint16)
+            img = img16[:, :, 0] * 256 + img16[:, :, 1]
         else:
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         output_filename = '{}-room_{}-loc_{}-render_{}.png'.format(
-            houseID, room_type, index, RENDER_NAMES[mode_idx])
+            houseID, room_type, index, render_name)
         cv2.imwrite(os.path.join(output_dir, output_filename), img)
 
 
@@ -141,7 +155,8 @@ def house_loader(house_gen, cfg, house_queue, gen_lock):
             continue
 
         house_queue.put((houseID, house))
-        print('Put house {} in queue, total: {}'.format(houseID, house_queue.qsize()))
+        print('Put house {} in queue, total: {}'.format(houseID,
+                                                        house_queue.qsize()))
 
 
 def house_renderer(cfg, house_queue, progress_queue):
@@ -149,14 +164,14 @@ def house_renderer(cfg, house_queue, progress_queue):
         houseID, house = house_queue.get()
         api = objrender.RenderAPIThread(w=args.width, h=args.height, device=0)
         env = Environment(api, house, cfg)
-        cam = api.getCamera()
 
         loc_idx = 0
         valid_rooms = get_valid_rooms(house)
         for room in valid_rooms:
-            for i in range(SAMPLES_PER_ROOM):
+            for _i in range(SAMPLES_PER_ROOM):
                 if not reset_random(env, house, room):
-                    print('Unable to sample location for house {}'.format(houseID))
+                    print('Unable to sample location for house {}'.format(
+                        houseID))
                     break
                 render_current_location(env, houseID, room['id'], loc_idx)
                 loc_idx += 1
@@ -192,20 +207,22 @@ if __name__ == '__main__':
     progress_queue = queue.Queue()
 
     loader_threads = []
-    for i in range(LOADING_THREADS):
-        t = Thread(target=house_loader,
-                    args=(house_gen, cfg, house_queue, gen_lock))
+    for _i in range(LOADING_THREADS):
+        t = Thread(
+            target=house_loader, args=(house_gen, cfg, house_queue, gen_lock))
         t.start()
         loader_threads.append(t)
 
     render_threads = []
-    for i in range(RENDER_THREADS):
-        t = Thread(target=house_renderer, args=(cfg, house_queue, progress_queue))
+    for _i in range(RENDER_THREADS):
+        t = Thread(
+            target=house_renderer, args=(cfg, house_queue, progress_queue))
         t.daemon = True
         t.start()
         render_threads.append(t)
 
-    progress_thread = Thread(target=progress_tracker, args=(total, progress_queue))
+    progress_thread = Thread(
+        target=progress_tracker, args=(total, progress_queue))
     progress_thread.daemon = True
     progress_thread.start()
 
