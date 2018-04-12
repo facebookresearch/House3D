@@ -3,17 +3,14 @@
 #
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
-import time
-import sys
-import numpy as np
-import json
-import csv
-import pickle
-import itertools
-import copy
-import math
 
-import pdb
+import csv
+import cv2
+import itertools
+import json
+import numpy as np
+import pickle
+import time
 
 __all__ = ['House']
 
@@ -60,8 +57,8 @@ def parse_walls(objFile, lower_bound = 1.0):
             for i in range(3):
                 if v[i] < v_min[i]: v_min[i] = v[i]
                 if v[i] > v_max[i]: v_max[i] = v[i]
-        obj = dict()
-        obj['bbox'] = dict()
+        obj = {}
+        obj['bbox'] = {}
         obj['bbox']['min']=v_min
         obj['bbox']['max']=v_max
         if v_min[1] < lower_bound:
@@ -91,8 +88,9 @@ def parse_walls(objFile, lower_bound = 1.0):
     return ret_walls
 
 
-def fill_region(proj,x1,y1,x2,y2,c):
-    proj[x1:(x2+1), y1:(y2+1)] = c
+def fill_region(proj, x1, y1, x2, y2, c):
+    proj[x1:(x2 + 1), y1:(y2 + 1)] = c
+
 
 def fill_obj_mask(house, dest, obj, c=1):
     n_row = dest.shape[0]
@@ -231,8 +229,8 @@ class House(object):
         # set target room connectivity
         print('Generate Target connectivity Map (Default <{}>) ...'.format(self.default_roomTp))
         ts = time.time()
-        self.connMapDict = dict()
-        self.roomTypeLocMap = dict()    # roomType -> feasible locations
+        self.connMapDict = {}
+        self.roomTypeLocMap = {}    # roomType -> feasible locations
         self.targetRoomTp = None
         self.targetRooms = []
         self.connMap = None
@@ -280,7 +278,7 @@ class House(object):
             dirs = [[0, 1], [1, 0], [-1, 0], [0, -1]]
         comps = []
         open_comps = set()
-        visit = dict()
+        visit = {}
         n = 0
         for x in range(x1, x2+1):
             for y in range(y1, y2+1):
@@ -610,10 +608,9 @@ class House(object):
         # approximate accommodation
         robotGridSize = int(np.rint(self.robotRad * 2 * self.n_row / self.L_det))
         if robotGridSize > 1:
-            robotGridRadius = robotGridSize / 2
-            import cv2
+            robotGridRadius = robotGridSize // 2
             kernel = np.zeros((robotGridSize, robotGridSize), np.uint8)
-            cv2.circle(kernel, (robotGridRadius + 1, robotGridRadius + 1), robotGridRadius, color=(1), thickness=-1)
+            cv2.circle(kernel, (robotGridRadius + 1, robotGridRadius + 1), robotGridRadius, color=1, thickness=-1)
             filtered_obstacles = (self.moveMap == 0).astype(np.uint8)
             dilated_obstacles = cv2.dilate(filtered_obstacles, kernel, iterations=1)
             self.moveMap = (dilated_obstacles == 0).astype(np.uint8)

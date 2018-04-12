@@ -23,12 +23,11 @@ LOADING_THREADS = 10
 RENDER_THREADS = 1
 
 SAMPLES_PER_ROOM = 3
-ROOM_TYPES = set(['living_room'])
+ROOM_TYPES = {'living_room'}
 
 # Not sure what scale this is, it seems like it's not in meters!
 ROBOT_RAD = 0.5
 ROBOT_HEIGHT = 1.0
-
 
 RENDER_MODES = [
     RenderMode.RGB,
@@ -38,6 +37,7 @@ RENDER_MODES = [
     RenderMode.INVDEPTH,
 ]
 RENDER_NAMES = ['rgb', 'depth', 'semantic', 'instance', 'invdepth']
+
 
 class RestrictedHouse(House):
     def __init__(self, **kwargs):
