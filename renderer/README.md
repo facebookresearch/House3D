@@ -106,9 +106,9 @@ If you are under a SSH session with X forwarding, make sure to `unset DISPLAY` b
 C++:
 ```
 ./test-rectangle.bin [egl/glx/glfw]		# a small tool to verify that rendering works
-./objview.bin xx.obj	# viewer
+./objview.bin xx.obj	# viewer (require a display to show images)
 ./objview-suncg.bin xx.obj ModelCategoryMapping.csv	 # viewer without person
-./objview-offline.bin xx.obj # render without gui (to test its availability on server)
+./objview-offline.bin xx.obj # render without display (to test its availability on server)
 ```
 
 Python:
@@ -123,10 +123,36 @@ See `test-rendering.py` for its API.
 Run `./debug-build.sh` and include the results in your issues, as well as your
 environment, and how you build.
 
+### Rendering Device:
+
+Certain executables (e.g. `objview.bin`) use on-screen rendering, which requires
+a screen/display to show the images.
+`objview-offline.bin` and the Python API all use off-screen rendering, and has
+the following two options on Linux:
+
+1. When the environment variable "DISPLAY" exists, it assumes a screen/display
+   is attached to X11 server, and will use the GLX backend. Note that:
+
+   + This method supports, but does not require a discrete GPU.
+   + On machines with >1 GPUs, it can only use the one connected to the X server.
+   + Certain types of X session (e.g. a ssh-forwarded X session, a VNC session) may not
+     support the necessary render features needed.
+2. Otherwise, it will use the EGL backend, which requires a decent nvidia GPU.
+   It also has the option to choose which GPU to use.
+
+On Mac, it will always use the CGL backend and does not require a GPU.
+
 ### Common Issues:
-1. `Assertion "glGetString(GL_VERSION)" FAILED`: try building with libglvnd as mentioned above
+1. `Assertion "glGetString(GL_VERSION)" FAILED`: try building with libglvnd as mentioned above.
 2. `undefined symbol: _ZTVNSt7__cxx1119basic_ostringstreamIcSt11char_traitsIcESaIcEEE` C++ ABI incompatibility.
-3. X server error: don't ssh with X forwarding. Make sure there is no "DISPLAY" environment variable.
-4. "Framebuffer is not complete" after opening many renderer: there seems to be a hard limit, depending on the hardwares,
-	on the number of rendering context you can use at the same time.
-5. "dynamic module does not define init function": compile-time and run-time python version does not match.
+3. "dynamic module does not define init function": compile-time and run-time python version does not match.
+4. X server error: don't ssh with X forwarding. Make sure there is no "DISPLAY" environment variable.
+5. "Framebuffer is not complete!": `LD_LIBRARY_PATH` incorrectly set, causing the binary to load a different library at run time.
+6. "Framebuffer is not complete" after opening many instances of renderer: there seems to be a hard limit, depending on the hardwares,
+	on the number of rendering context you can use.
+7. "[EGL] Detected 0 devices": EGL cannot detect devices. There could be multiple reasons:
+   + Not linking against `libEGL.so` provided by nvidia driver.
+   + GPU does not support EGL. 
+   + Driver version does not support EGL.
+   + Running inside container (e.g. docker) with an old driver may also result
+     in such error.

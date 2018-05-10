@@ -34,3 +34,28 @@ Both will give you an agent in the environment with interactive keyboard control
 Some houses have weird structures that may not be suitable for your task.
 In the RoomNav task, we've manually selected a subset of houses that looks "reasonable".
 The list can be found [here](https://github.com/facebookresearch/House3D/releases/download/v0.9/all_houses.json)
+
+## Concurrency Issues:
+
+1. Rendering many houses in parallel:
+
+A `RenderAPI` can only render the house specified by `api.loadScene`. To render
+different houses, create more instances of `RenderAPI`.
+
+2. Multi-threading:
+
+`objrender.RenderAPI` can only be used in the thread that creates it. 
+To do multi-threading, use `objrender.RenderAPIThread`, which is compatible
+with `RenderAPI`, but safe to use in any thread. The APIs are compatible, but
+`RenderAPIThread` may be slightly slower.
+
+Using multiple instance of `RenderAPI` to render from multiple threads does not
+seem to improve rendering throughput, probably due to hardware limitation.
+However, rendering from multiple processes does improve rendering throughput.
+
+3. Multi-processing:
+
+`objrender.RenderAPI` is not fork-safe. You cannot share a `RenderAPI` among processes.
+To render from multiple processes in parallel, create the `RenderAPI` separately
+in each process. Examples can be found in 
+`tests/benchmark-rendering-multiprocess.py` and `tests/benchmark-env-multiprocess.py`.
