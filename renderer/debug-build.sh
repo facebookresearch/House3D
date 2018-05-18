@@ -30,7 +30,6 @@ PYCONFIG=${PYTHON_CONFIG:-python-config}
 
 ##### Flags:
 set -x
-pkg-config --cflags --libs glew
 pkg-config --cflags --libs glfw3
 
 if [ ! "$IS_MAC" ]; then

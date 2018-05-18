@@ -75,7 +75,7 @@ Later, remember to compile `INCLUDE_DIR=-I/path/to/INSTALL_DIR make`.
 
 If multiple `INCLUDE_DIR` need to be added, use `INCLUDE_DIR=-I/path/one -I/path/two`.
 
-No need to install libglvnd.
+Install libglvnd the same way as above.
 
 ## Build
 Depends gcc >= 4.9 or clang.
@@ -85,7 +85,7 @@ git submodule init
 git submodule update
 # make sure your environment variables don't include paths you don't need
 
-# linux/macos, system python:
+# linux/macos, system python (or homebrew python on macos):
 make
 # or PYTHON_CONFIG=python3-config make
 # or PYTHON_CONFIG=python2-config make
@@ -93,11 +93,12 @@ make
 
 # linux, anaconda:
 SYSTEM=conda.linux PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make
-
-# macos, anaconda:
-SYSTEM=conda.macos PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make
-# If using anaconda, you also need to add /path/to/anaconda/lib to LD_LIBRARY_PATH
 ```
+<!--
+   -# macos, anaconda (XX have some issues for now):
+   -# SYSTEM=conda.macos PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make
+   -# If using anaconda, you also need to add /path/to/anaconda/lib to LD_LIBRARY_PATH
+	 -->
 
 ## Use
 
@@ -152,7 +153,7 @@ On Mac, it will always use the CGL backend and does not require a GPU.
 	on the number of rendering context you can use.
 7. "[EGL] Detected 0 devices": EGL cannot detect devices. There could be multiple reasons:
    + Not linking against `libEGL.so` provided by nvidia driver.
-   + GPU does not support EGL. 
+   + GPU does not support EGL.
    + Driver version does not support EGL.
    + Running inside container (e.g. docker) with an old driver may also result
      in such error.
