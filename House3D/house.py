@@ -399,8 +399,9 @@ class House(object):
         self.inroomDist = inroomDist = np.ones((self.n_row+1, self.n_row+1), dtype=np.float32) * -1
         dirs = [[0, 1], [1, 0], [-1, 0], [0, -1]]
         que = []
-        flag_find_open_components = True
-        for _ in range(2):
+        for flag_find_open_components in [True, False]:
+            if not flag_find_open_components:
+                print('WARINING!!!! [House] No Space Found for Room Type {}! Now search even for closed region!!!'.format(targetRoomTp))
             for room in targetRooms:
                 _x1, _, _y1 = room['bbox']['min']
                 _x2, _, _y2 = room['bbox']['max']
@@ -426,12 +427,8 @@ class House(object):
                     inroomDist[x, y] = tdist
                 for x, y in curr_major_coors:
                     inroomDist[x, y] -= min_dist_to_center
-            if len(que) > 0: break
-            if flag_find_open_components:
-                flag_find_open_components = False
-            else:
+            if len(que) > 0:
                 break
-            print('WARINING!!!! [House] No Space Found for Room Type {}! Now search even for closed region!!!'.format(targetRoomTp))
         assert len(que) > 0, "Error!! [House] No space found for room type {}. House ID = {}"\
             .format(targetRoomTp, (self._id if hasattr(self, '_id') else 'NA'))
         ptr = 0
