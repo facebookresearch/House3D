@@ -147,10 +147,11 @@ EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
 
   EGLBoolean succ = eglInitialize(eglDpy_, &major, &minor);
   if (!succ) {
+    // cgroup may block our access to /dev/nvidiaX, but eglQueryDevices can still see them. This can cause a failure at eglInitialize
     string dev = ssprintf("/dev/nvidia%d", device);
     int ret = open(dev.c_str(), O_RDONLY);
     if (ret == -1) {
-      error_exit(ssprintf("Cannot access %s, failed to initialize EGL display! See README if you're inside docker.", dev.c_str()));
+      error_exit(ssprintf("Cannot access %s, failed to initialize EGL display! See README if you're inside cgroup/container.", dev.c_str()));
     }
     error_exit("Failed to initialize EGL display!");
   }

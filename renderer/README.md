@@ -157,4 +157,4 @@ On Mac, it will always use the CGL backend and does not require a GPU.
    + Running inside container (e.g. docker) with an old driver may also result
      in such error.
 8. EGL detected >0 devices but says "Cannot access /dev/nvidiaX":
-	 If you're inside cgroup/container, initialize the renderer with a device id from `detect_nvidia_devices()`
+  If you're inside cgroup/container, initialize the renderer with a device id from `detect_nvidia_devices()` in `common.py`
