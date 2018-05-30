@@ -93,12 +93,11 @@ make
 
 # linux, anaconda:
 SYSTEM=conda.linux PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make
+
+# macos, anaconda (upgrade anaconda if you see any compilation issues):
+SYSTEM=conda.macos PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make
+# If using anaconda, you also need to add /path/to/anaconda/lib to LD_LIBRARY_PATH
 ```
-<!--
-   -# macos, anaconda (XX have some issues for now):
-   -# SYSTEM=conda.macos PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make
-   -# If using anaconda, you also need to add /path/to/anaconda/lib to LD_LIBRARY_PATH
-	 -->
 
 ## Use
 
