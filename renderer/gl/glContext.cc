@@ -11,6 +11,11 @@
 #include "glContext.hh"
 #include <iostream>
 
+#ifdef __linux__
+#include <sys/stat.h>
+#include <fcntl.h>
+#endif
+
 #include "lib/debugutils.hh"
 #include "lib/strutils.hh"
 
@@ -121,7 +126,7 @@ EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
 
   // 1. Initialize EGL
   {
-    static const int MAX_DEVICES = 8;
+    static const int MAX_DEVICES = 16;
     EGLDeviceEXT eglDevs[MAX_DEVICES];
     EGLint numDevices;
     PFNEGLQUERYDEVICESEXTPROC eglQueryDevicesEXT =
@@ -141,8 +146,14 @@ EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
   EGLint major, minor;
 
   EGLBoolean succ = eglInitialize(eglDpy_, &major, &minor);
-  if (!succ)
+  if (!succ) {
+    string dev = ssprintf("/dev/nvidia%d", device);
+    int ret = open(dev.c_str(), O_RDONLY);
+    if (ret == -1) {
+      error_exit(ssprintf("Cannot access %s, failed to initialize EGL display! See README if you're inside docker.", dev.c_str()));
+    }
     error_exit("Failed to initialize EGL display!");
+  }
   checkError(succ);
 
   // 2. Select an appropriate configuration

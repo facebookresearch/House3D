@@ -4,6 +4,8 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
+import itertools
+import sys
 import json
 import os
 
@@ -52,3 +54,33 @@ def create_default_config(prefix, colormap='coarse'):
         prefix
     }
     return ret
+
+
+def detect_nvidia_devices():
+    """
+    When we are running inside cgroup/container which limits GPU visibility,
+    EGL may fail because it can still detect all devices - even those it has no permission to access.
+    In this case, users need to call this function and
+    only use the device ids that's returned.
+
+    Returns:
+        A list of int, the available device id to use for rendering
+    """
+    assert sys.platform.startswith('linux')
+    ret = []
+    for k in itertools.count():
+        dev = '/dev/nvidia{}'.format(k)
+        if os.path.exists(dev):
+            try:
+                f = open(dev)
+                f.close()
+            except PermissionError:
+                pass
+            else:
+                ret.append(k)
+        else:
+            break
+    return ret
+
+if __name__ == '__main__':
+    print(detect_nvidia_devices())
