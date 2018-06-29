@@ -60,6 +60,21 @@ bool ObjLoader::load(string fname) {
         std::move(shp.mesh), std::move(shp.name), static_cast<int>(i)});
   }
 
+  // validate material ids
+  int num_material = materials.size();
+  for (auto& shp : shapes) {
+    for (auto& id : shp.mesh.material_ids) {
+      // This can happen if, e.g., the mtl file cannot be found
+      if (id < 0) {
+        error_exit("Materials are not loaded correctly.");
+      }
+      if (id >= num_material) {
+        error_exit(ssprintf("Need material %d but only %d materials were loaded.", id, num_material));
+      }
+    }
+  }
+
+
   return true;
 }
 
@@ -168,7 +183,7 @@ void ObjLoader::sort_by_transparent(const TextureRegistry& tex) {
   std::sort(shapes.begin(), shapes.end(),
       [this, &is_transparent_material](const Shape& a, const Shape& b) -> bool {
         bool is_a = is_transparent_material(a.mesh.material_ids[0]),
-             is_b = is_transparent_material(b.mesh.material_ids[0]);
+          is_b = is_transparent_material(b.mesh.material_ids[0]);
         if (is_a != is_b)
           return is_b;
         return a.name.compare(b.name) < 0;
