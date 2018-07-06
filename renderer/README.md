@@ -120,8 +120,13 @@ python test-rendering.py /path/to/suncg/house/house.obj
 See `test-rendering.py` for its API.
 
 ## Trouble Shooting
-Run `./debug-build.sh` and include the results in your issues, as well as your
-environment, and how you build.
+
+Please tell us the following if you encounter any build issues or the code fails to run:
+
+1. Your environment (hardware, OS), and how you build.
+2. `cd` to `renderer/` directory and run `./debug-build.sh`. Include the results in your issues.
+3. If you've successfully built some binaries, please include the output of the
+   two commands: `./test-rectangle.bin egl`, `./test-rectangle.bin headless`.
 
 ### Rendering Device:
 
