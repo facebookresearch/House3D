@@ -4,16 +4,13 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-import time
-import os
-import sys
 import tqdm
 import numpy as np
 import cv2
 import argparse
 
 from House3D import objrender, create_default_config
-from House3D.objrender import Camera, RenderMode
+from House3D.objrender import RenderMode
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -22,7 +19,7 @@ if __name__ == '__main__':
     parser.add_argument('--height', type=int, default=600)
     parser.add_argument('--device', type=int, default=0)
     parser.add_argument('--interactive', action='store_true',
-        help='run interactive rendering (does not work under ssh)')
+                        help='run interactive rendering (does not work under ssh)')
     args = parser.parse_args()
 
     cfg = create_default_config('.')
@@ -45,7 +42,7 @@ if __name__ == '__main__':
             mat = mat[:, :, ::-1]   # cv expects bgr
 
         if args.interactive:
-            cv2.imshow("aaa", mat)
+            cv2.imshow("window", mat)
             key = cv2.waitKey(0)
             if key == 27 or key == ord('q'): #esc
                 break

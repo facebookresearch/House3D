@@ -9,7 +9,7 @@ These are some platforms we've tested on:
 
 ### Ubuntu 16.04
 ```
-apt install libglfw3-dev libglm-dev libx11-dev libegl1-mesa-dev
+apt install libglfw3-dev libglm-dev libx11-dev libegl1-mesa-dev libpng-dev libjpeg-dev
 ```
 
 ### macOS
@@ -43,7 +43,7 @@ make && make install
 
 ### Ubuntu 14.04 with Nvidia GPU
 ```
-apt install libx11-dev libegl1-mesa-dev
+apt install libx11-dev libegl1-mesa-dev libpng-dev libjpeg-dev
 ```
 
 Install glfw3 (the one in apt is too old):
@@ -104,11 +104,9 @@ SYSTEM=conda.macos PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make
 
 ## Use
 
-If you are under a SSH session with X forwarding, make sure to `unset DISPLAY` before using.
-
 C++:
 ```
-./test-rectangle.bin [egl/glx/glfw]		# a small tool to verify that rendering works
+./test-rectangle.bin [egl/headless/glfw]		# a small tool to verify that rendering works
 ./objview.bin xx.obj	# viewer (require a display to show images)
 ./objview-suncg.bin xx.obj ModelCategoryMapping.csv	 # viewer without person
 ./objview-offline.bin xx.obj # render without display (to test its availability on server)
@@ -121,34 +119,18 @@ export PYTHONPATH=..
 python test-rendering.py /path/to/suncg/house/house.obj
 ```
 See `test-rendering.py` for its API.
+Example data can be found at [releases](https://github.com/facebookresearch/House3D/releases/tag/example-data).
+
 
 ## Trouble Shooting
 
 Please tell us the following if you encounter any build issues or the code fails to run:
 
-1. Your environment (hardware, OS), and how you build.
+1. Your environment (hardware, OS, driver version), and how you build.
 2. `cd` to `renderer/` directory and run `./debug-build.sh`. Include the results in your issues.
 3. If you've successfully built some binaries, please include the output of the
    two commands: `./test-rectangle.bin egl`, `./test-rectangle.bin headless`.
 
-### Rendering Device:
-
-Certain executables (e.g. `objview.bin`) use on-screen rendering, which requires
-a screen/display to show the images.
-`objview-offline.bin` and the Python API all use off-screen rendering, and has
-the following two options on Linux:
-
-1. When the environment variable "DISPLAY" exists, it assumes a screen/display
-   is attached to X11 server, and will use the GLX backend. Note that:
-
-   + This method supports, but does not require a discrete GPU.
-   + On machines with >1 GPUs, it can only use the one connected to the X server.
-   + Certain types of X session (e.g. a ssh-forwarded X session, a VNC session) may not
-     support the necessary render features needed.
-2. Otherwise, it will use the EGL backend, which requires a decent nvidia GPU.
-   It also has the option to choose which GPU to use.
-
-On Mac, it will always use the CGL backend and does not require a GPU.
 
 ### Common Issues:
 1. `Assertion "glGetString(GL_VERSION)" FAILED`: try building with libglvnd as mentioned above.
