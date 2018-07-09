@@ -21,6 +21,12 @@ SUNCG/
 
 ## Installation:
 
+If you're on a Linux with Nvidia GPUs,
+we recommend using our [Dockerfile](Dockerfile) to run House3D,
+so you don't have to worry about the build process.
+
+To build:
+
 1. Compile the renderer and confirm it works, see [renderer/README.md](renderer) for compilation details.
 
 2. To be able to `import House3D`, add `/path/to/House3DRepo` to `PYTHONPATH`. Alternatively, run `pip install --user .`.
@@ -47,7 +53,7 @@ different houses, create more instances of `RenderAPI`.
 
 2. Multi-threading:
 
-As required by OpenGL, `objrender.RenderAPI` can only be used in the thread that creates it. 
+As required by OpenGL, `objrender.RenderAPI` can only be used in the thread that creates it.
 To do multi-threading, use `objrender.RenderAPIThread`, which is compatible
 with `RenderAPI`, but safe to use in any thread. The APIs are compatible, but
 `RenderAPIThread` may be slightly slower.
@@ -60,5 +66,5 @@ However, rendering from multiple processes does improve rendering throughput.
 
 `objrender.RenderAPI` is not fork-safe. You cannot share a `RenderAPI` among processes.
 To render from multiple processes in parallel, create the `RenderAPI` separately
-in each process. Examples can be found in 
+in each process. Examples can be found in
 `tests/benchmark-rendering-multiprocess.py` and `tests/benchmark-env-multiprocess.py`.

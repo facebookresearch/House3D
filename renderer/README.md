@@ -1,6 +1,9 @@
 
 # Rendering code of House3D
 
+We provided the [Dockerfile](../Dockerfile) to simplify the build process on Linux + Nvidia GPUs.
+Follow the instructions below if you want to build by your own.
+
 Build process may be slightly different on different platforms, due to the dependencies.
 These are some platforms we've tested on:
 
