@@ -117,9 +117,47 @@ Python:
 cd /path/to/House3DRepo/tests
 export PYTHONPATH=..
 python test-rendering.py /path/to/suncg/house/house.obj
+
+# benchmark the rendering framerate:
 ```
-See `test-rendering.py` for its API.
+Check `test-rendering.py` for the API usage.
 Example data can be found at [releases](https://github.com/facebookresearch/House3D/releases/tag/example-data).
+
+## Choosing the Rendering Backend:
+
+Certain executables (e.g. `objview.bin`) use on-screen rendering, which requires
+a screen/display to show the images.
+`objview-offline.bin` and the Python API all use off-screen rendering, and has
+the following two options on Linux:
+
+1. When the environment variable "DISPLAY" exists, the variable is used to
+   connect to an X11 server, and the __GLX rendering backend__ will be used. Note that:
+
+   + This method does not require a discrete GPU.
+     + If the X11 server is connected to a discrete or integrated GPU, the GPU
+       will be used. On machines with >1 GPUs, it can only use the one connected to the X11 server.
+     + If not (e.g. xvfb, vnc), software rendering (mesa) will be used with a
+       very low framerate.
+   + Certain types of X session (e.g. a ssh-forwarded X session, a VNC session) may not
+     support the necessary render features needed.
+     If you are under a SSH session with X forwarding, make sure to 
+     `unset DISPLAY` to disable the GLX backend.
+
+2. Otherwise, it will use the __EGL rendering backend__, which requires a decent Nvidia GPU.
+   It also has the option to choose which GPU to use, therefore you can run 
+   multiple rendering instances on __multiple GPUs__.
+
+On Mac, it will always use the CGL backend.
+
+## Speed:
+
+Use the following script to benchmark:
+```
+python benchmark-rendering-multiprocess.py /path/to/suncg/house/house.obj --num-proc 5 --num-gpu 1
+```
+The command prints per-process framerate.
+The total framerate should reach __1.5k ~ 2.5k frames per second__ on a decent Nvidia GPU.
+It also scales well to multiple GPUs if used with the EGL backend.
 
 
 ## Trouble Shooting
@@ -137,13 +175,13 @@ Please tell us the following if you encounter any build issues or the code fails
 2. `undefined symbol: _ZTVNSt7__cxx1119basic_ostringstreamIcSt11char_traitsIcESaIcEEE` C++ ABI incompatibility.
 3. "dynamic module does not define init function": compile-time and run-time python version does not match.
 4. X server error: don't ssh with X forwarding. Make sure there is no "DISPLAY" environment variable.
-5. "Framebuffer is not complete!": `LD_LIBRARY_PATH` incorrectly set, causing the binary to load a different library at run time.
+5. "Framebuffer is not complete!": `LD_LIBRARY_PATH` incorrectly set, causing
+   the binary to load a different OpenGL library at run time.
 6. "Framebuffer is not complete" after opening many instances of renderer: there seems to be a hard limit, depending on the hardwares,
 	on the number of rendering context you can use.
-7. "[EGL] Detected 0 devices": EGL cannot detect devices. There could be multiple reasons:
+7. "[EGL] Detected 0 devices" or "Failed to get function pointer of eglQueryDevicesEXT": EGL not functioning. There could be multiple reasons:
    + Not linking against `libEGL.so` provided by nvidia driver.
-   + GPU does not support EGL.
-   + Driver version does not support EGL.
+   + GPU or driver does not support EGL.
    + Running inside container (e.g. docker) with an old driver may also result
      in such error.
 8. EGL detected >0 devices but says "Cannot access /dev/nvidiaX":

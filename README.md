@@ -10,7 +10,8 @@ a diverse set of scene types, layouts and objects sourced from the [SUNCG datase
 It consists of over 45k indoor 3D scenes, ranging from studios to two-storied houses
 with swimming pools and fitness rooms. All 3D objects are fully annotated with category labels.
 Agents in the environment have access to observations of multiple modalities, including RGB images,
-depth, segmentation masks and top-down 2D map views.
+depth, segmentation masks and top-down 2D map views. The renderer runs at
+thousands frames per second, making it suitable for large-scale RL training.
 
 Usage instructions can be found at [INSTRUCTION.md](INSTRUCTION.md)
 

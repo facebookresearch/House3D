@@ -16,7 +16,7 @@ import cv2
 from House3D import objrender, create_default_config
 from House3D.objrender import Camera, RenderMode
 
-def worker(idx, device):
+def worker(idx, device, num_iter):
     api = objrender.RenderAPI(args.width, args.height, device=device)
     api.printContextInfo()
     mappingFile = cfg['modelCategoryFile']
@@ -26,16 +26,15 @@ def worker(idx, device):
     api.loadScene(args.obj, mappingFile, colormapFile)
     cam = api.getCamera()
 
-    N = 5000
     start = time.time()
-    for t in range(N):
+    for t in range(num_iter):
         if t % 2 == 1:
             api.setMode(RenderMode.RGB)
         else:
             api.setMode(RenderMode.SEMANTIC)
         mat = np.array(api.render(), copy=False)
     end = time.time()
-    print("Worker {}, speed {:.3f} fps".format(idx, N / (end - start)))
+    print("Worker {}, speed {:.3f} fps".format(idx, num_iter / (end - start)))
 
 
 if __name__ == '__main__':
@@ -51,24 +50,15 @@ if __name__ == '__main__':
     8proc, 8gpu: 650x8fps (roughly linear scaling)
 
     2. GTX 1080Ti, nvidia387.34:
-    With EGL backend:
-    1proc, 1gpu: 888fps
-    3proc, 1gpu: 720x3fps
-    5proc, 1gpu: 590x5fps
-    10proc, 1gpu: 290x10fps
-
-    With GLX backend:
     1proc: 1367fps
     3proc: 1005x3fps
     5proc: 680x5fps
 
     3. Quadro GP100:
-    # TODO find out the reason why it's slow, probably a library issue
     With EGL backend,nvidia384.81:
-    1proc, 1gpu: 414fps
-    3proc, 1gpu: 345x3fps
-    5proc, 1gpu: 270x5fps
-    10proc, 2gpu: 270x10fps
+    1proc, 1gpu: 700fps
+    3proc, 1gpu: 600x3fps
+    5proc, 1gpu: 500x5fps
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('obj')
@@ -76,6 +66,7 @@ if __name__ == '__main__':
     parser.add_argument('--num-gpu', type=int, default=1)
     parser.add_argument('--width', type=int, default=120)
     parser.add_argument('--height', type=int, default=90)
+    parser.add_argument('--num-iter', type=int, default=5000)
     args = parser.parse_args()
 
     global cfg
@@ -84,7 +75,7 @@ if __name__ == '__main__':
     procs = []
     for i in range(args.num_proc):
         device = i % args.num_gpu
-        procs.append(mp.Process(target=worker, args=(i, device)))
+        procs.append(mp.Process(target=worker, args=(i, device, args.num_iter)))
 
     for p in procs:
         p.start()
