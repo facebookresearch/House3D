@@ -26,6 +26,9 @@ echo
 echo "LD_LIBRARY_PATH:
 $LD_LIBRARY_PATH"
 echo
+echo "PYTHONPATH:
+$PYTHONPATH"
+echo
 PYCONFIG=${PYTHON_CONFIG:-python-config}
 
 ##### Flags:

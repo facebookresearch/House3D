@@ -93,6 +93,7 @@ Please tell us the following if you encounter any build issues or the code fails
 2. `cd` to `renderer/` directory and run `./debug-build.sh`. Include the results in your issues.
 3. If you've successfully built some binaries, please include the output of the
    two commands: `./test-rectangle.bin egl`, `./test-rectangle.bin headless`.
+4. Tell us what you observed by pasting them in full, not by describing them in abstract.
 
 
 ### Common Issues:
