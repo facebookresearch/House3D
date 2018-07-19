@@ -80,7 +80,7 @@ def detect_nvidia_devices():
                 ret.append(k)
         else:
             break
-    return ret
+    return list(range(len(ret)))
 
 if __name__ == '__main__':
     print(detect_nvidia_devices())

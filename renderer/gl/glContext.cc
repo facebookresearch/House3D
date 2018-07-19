@@ -14,6 +14,7 @@
 #ifdef __linux__
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 #endif
 
 #include "lib/debugutils.hh"
@@ -39,6 +40,16 @@ const EGLint EGLpbufferAttribs[] = {
   EGL_HEIGHT, 9,
   EGL_NONE,
 };
+
+
+bool check_nvidia_readable(int device) {
+  string dev = ssprintf("/dev/nvidia%d", device);
+  int ret = open(dev.c_str(), O_RDONLY);
+  if (ret == -1)
+    return false;
+  close(ret);
+  return true;
+}
 
 const int GLXcontextAttribs[] = {
     GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
@@ -138,16 +149,32 @@ EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
     }
 
     eglQueryDevicesEXT(MAX_DEVICES, eglDevs, &numDevices);
-    cerr << "[EGL] Detected " << numDevices << " devices. Using device " << device << endl;
-    m_assert(device < numDevices);
-    eglDpy_ = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[device], 0);
 
-    // cgroup may block our access to /dev/nvidiaX, but eglQueryDevices can still see them.
-    string dev = ssprintf("/dev/nvidia%d", device);
-    int ret = open(dev.c_str(), O_RDONLY);
-    if (ret == -1) {
-      error_exit(ssprintf("Cannot access %s! See README if you're inside cgroup/container.", dev.c_str()));
+    std::vector<int> visible_devices;
+    if (numDevices > 1) {  // we must be using nvidia GPUs
+      // cgroup may block our access to /dev/nvidiaX, but eglQueryDevices can still see them.
+      for (int i = 0; i < numDevices; ++i) {
+        if (check_nvidia_readable(i))
+          visible_devices.push_back(i);
+      }
+    } else {
+      // TODO we may still be using nvidia GPUs, but there is no way to tell.
+      // But it's very rare that you'll start a docker and hide the only one GPU from it.
+      visible_devices.push_back(0);
     }
+
+    if (device >= visible_devices.size()) {
+      error_exit(ssprintf("[EGL] Request device %d but only found %lu devices", device, visible_deviecs.size()));
+    }
+
+    if (visible_devices.size() == numDevices) {
+      cerr << "[EGL] Detected " << numDevices << " devices. Using device " << device << endl;
+    } else {
+      cerr << "[EGL] " << visible_devices.size() << " out of " << numDevices <<
+          " devices are accessible. Using device " << device << " whose physical id is " << visible_devices[device] << "." << endl;
+      device = visible_devices[device];
+    }
+    eglDpy_ = eglGetPlatformDisplayEXT(EGL_PLATFORM_DEVICE_EXT, eglDevs[device], 0);
   }
 
   EGLint major, minor;

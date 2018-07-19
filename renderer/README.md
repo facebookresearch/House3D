@@ -65,11 +65,11 @@ the following two options on Linux:
        very low framerate.
    + Certain types of X session (e.g. a ssh-forwarded X session, a VNC session) may not
      support the necessary render features needed.
-     If you are under a SSH session with X forwarding, make sure to 
+     If you are under a SSH session with X forwarding, make sure to
      `unset DISPLAY` to disable the GLX backend.
 
 2. Otherwise, it will use the __EGL rendering backend__, which requires a decent Nvidia GPU.
-   It also has the option to choose which GPU to use, therefore you can run 
+   It also has the option to choose which GPU to use, therefore you can run
    multiple rendering instances on __multiple GPUs__.
 
 On Mac, it will always use the CGL backend.
@@ -110,5 +110,3 @@ Please tell us the following if you encounter any build issues or the code fails
    + GPU or driver does not support EGL.
    + Running inside container (e.g. docker) with an old driver may also result
      in such error.
-8. EGL detected >0 devices but says "Cannot access /dev/nvidiaX":
-  If you're inside cgroup/container, initialize the renderer with a device id from `detect_nvidia_devices()` in `common.py`
