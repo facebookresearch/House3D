@@ -163,11 +163,11 @@ EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
       visible_devices.push_back(0);
     }
 
-    if (device >= visible_devices.size()) {
-      error_exit(ssprintf("[EGL] Request device %d but only found %lu devices", device, visible_deviecs.size()));
+    if (device >= static_cast<int>(visible_devices.size())) {
+      error_exit(ssprintf("[EGL] Request device %d but only found %lu devices", device, visible_devices.size()));
     }
 
-    if (visible_devices.size() == numDevices) {
+    if (static_cast<int>(visible_devices.size()) == numDevices) {
       cerr << "[EGL] Detected " << numDevices << " devices. Using device " << device << endl;
     } else {
       cerr << "[EGL] " << visible_devices.size() << " out of " << numDevices <<
