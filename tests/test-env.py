@@ -4,7 +4,6 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-import tqdm
 import cv2
 
 from House3D import objrender, Environment, load_config
@@ -18,9 +17,7 @@ if __name__ == '__main__':
 
     # fourcc = cv2.VideoWriter_fourcc(*'X264')
     # writer = cv2.VideoWriter('out.avi', fourcc, 30, (1200, 900))
-    for t in tqdm.trange(1000):
-        if t % 1000 == 0:
-            env.reset()
+    while True:
         mat = env.debug_render()
         # writer.write(mat)
         cv2.imshow("aaa", mat)

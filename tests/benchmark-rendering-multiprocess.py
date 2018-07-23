@@ -9,7 +9,6 @@ import os
 import multiprocessing as mp
 import argparse
 import sys
-import tqdm
 import numpy as np
 import cv2
 

@@ -4,10 +4,10 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-import tqdm
 import numpy as np
 import cv2
 import argparse
+from itertools import count
 
 from House3D import objrender, create_default_config
 from House3D.objrender import RenderMode
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     cam = api.getCamera()
 
     modes = [RenderMode.RGB, RenderMode.SEMANTIC, RenderMode.INSTANCE, RenderMode.DEPTH]
-    for t in tqdm.trange(10000):
+    for t in count():
         mode = modes[t % len(modes)]
         api.setMode(mode)
         mat = np.array(api.render())
