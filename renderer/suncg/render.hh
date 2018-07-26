@@ -100,8 +100,9 @@ class SUNCGRenderAPI {
     // r, g, b: integer in [0, 255]
     // Returns: an object name defined in the obj file, or "" if not found.
     // For SUNCG data, this object name is usually the "modelId" field
-    // in house.json.
-    std::string getNameFromInstanceColor(int r, int g, int b) {
+    // in house.json. Note that each scene may have many objects with the same
+    // modelId.
+    std::string getNameFromInstanceColor(int r, int g, int b) const {
         return scene_->get_name_from_instance_color(r, g, b);
     }
 
@@ -171,7 +172,7 @@ class SUNCGRenderAPIThread {
       });
     }
 
-    std::string getNameFromInstanceColor(int r, int g, int b) {
+    std::string getNameFromInstanceColor(int r, int g, int b) const {
         return this->api_->getNameFromInstanceColor(r, g, b);
     }
 

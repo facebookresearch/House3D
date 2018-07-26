@@ -77,9 +77,13 @@ class SUNCGScene : public ObjSceneBase {
 
     RenderMode get_mode() const { return mode_; }
 
-    std::string get_name_from_instance_color(int r, int g, int b) {
+    std::string get_name_from_instance_color(int r, int g, int b) const {
       int key = r * 256 * 256 + g * 256 + b;
-      return instance_color_to_name_[key];
+      auto itr = instance_color_to_name_.find(key);
+      if (itr != instance_color_to_name_.end()) {
+        return itr->second;
+      }
+      return "";
     }
 
   protected:
