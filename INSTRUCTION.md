@@ -32,7 +32,9 @@ To build:
 
 1. Compile the renderer and confirm it works, see [renderer/README.md](renderer) for compilation details.
 
-2. To be able to `import House3D`, add `/path/to/House3DRepo` to `PYTHONPATH`. Alternatively, run `pip install --user .`.
+2. Install OpenCV with python bindings. Note that only OpenCV 3 was tested, although OpenCV 2 might work as well.
+
+3. To be able to `import House3D`, add `/path/to/House3DRepo` to `PYTHONPATH`. Alternatively, run `pip install --user .`.
 
 ## Usage
 
