@@ -35,7 +35,7 @@ C++:
 ```
 ./test-rectangle.bin [egl/headless/glfw]		# a small tool to verify that rendering works
 ./objview.bin xx.obj	# viewer (require a display to show images)
-./objview-suncg.bin xx.obj ModelCategoryMapping.csv	 # viewer without person
+./objview-suncg.bin xx.obj ModelCategoryMapping.csv	 colormap_coarse.csv  # viewer in SUNCG mode
 ./objview-offline.bin xx.obj # render without display (to test its availability on server)
 ```
 
@@ -45,7 +45,10 @@ cd /path/to/House3DRepo/tests
 export PYTHONPATH=..
 python test-rendering.py /path/to/suncg/house/house.obj
 ```
-Check `test-rendering.py` for the API usage.
+Check `test-rendering.py` for the API usage. Read docstrings in 
+[suncg/render.hh](https://github.com/facebookresearch/House3D/blob/master/renderer/suncg/render.hh) 
+for detailed explanation on the APIs.
+
 Example data can be found at [releases](https://github.com/facebookresearch/House3D/releases/tag/example-data).
 
 ## Choosing the Rendering Backend:

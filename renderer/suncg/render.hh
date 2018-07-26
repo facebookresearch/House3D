@@ -57,8 +57,10 @@ class SUNCGRenderAPI {
     //  The mapping from color to class is in the CSV.
     //
     // For INSTANCE mode, returns a 3-channel image.
-    //  Each unique color means an instance and the coloring is consistent
-    //  across different views.
+    //  Each unique color means an instance, and the coloring of each instance
+    //  is consistent within a scene across different views.
+    //  You can use getNameFromInstanceColor(r, g, b) to know which object the
+    //  instance color maps to.
     //
     // For DEPTH mode, returns a 2-channel image:
     //  The first channel contains depth values scaled to (0, 255), where
@@ -95,7 +97,15 @@ class SUNCGRenderAPI {
     // Get the resolution.
     Geometry resolution() const { return geo_; }
 
-  private:
+    // r, g, b: integer in [0, 255]
+    // Returns: an object name defined in the obj file, or "" if not found.
+    // For SUNCG data, this object name is usually the "modelId" field
+    // in house.json.
+    std::string getNameFromInstanceColor(int r, int g, int b) {
+        return scene_->get_name_from_instance_color(r, g, b);
+    }
+
+    private:
     SceneCache scene_cache_;
     SUNCGScene* scene_ = nullptr; // no ownership
 
@@ -161,7 +171,11 @@ class SUNCGRenderAPIThread {
       });
     }
 
-  private:
+    std::string getNameFromInstanceColor(int r, int g, int b) {
+        return this->api_->getNameFromInstanceColor(r, g, b);
+    }
+
+    private:
     std::unique_ptr<SUNCGRenderAPI> api_;
     ExecutorInThread exec_;
 };

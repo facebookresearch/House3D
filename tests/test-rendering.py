@@ -42,6 +42,10 @@ if __name__ == '__main__':
             mat = mat[:, :, ::-1]   # cv expects bgr
 
         if args.interactive:
+            if mode == RenderMode.INSTANCE:
+                center_rgb = mat[args.height // 2, args.width // 2, ::-1]
+                center_instance = api.getNameFromInstanceColor(center_rgb[0], center_rgb[1], center_rgb[2])
+                print("Instance ID in the center: ", center_instance)
             cv2.imshow("window", mat)
             key = cv2.waitKey(0)
             if key == 27 or key == ord('q'): #esc

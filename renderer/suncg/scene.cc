@@ -16,6 +16,7 @@ using namespace std;
 
 namespace {
 
+// Returns: a list of color, each represented as 3 integers in [0, 255]
 std::vector<glm::vec3> get_uniform_sampled_colors(int count) {
   int interval_length = static_cast<int>(pow(256, 3)) / (count + 2);
   int current_color = interval_length;
@@ -26,7 +27,7 @@ std::vector<glm::vec3> get_uniform_sampled_colors(int count) {
     int g = (current_color / 256) % 256;
     int b = (current_color / 256 / 256) % 256;
 
-    result.push_back(glm::vec3{r / 255.0, g / 255.0, b / 255.0});
+    result.push_back(glm::vec3{r, g, b});
 
     current_color += interval_length;
   }
@@ -215,6 +216,9 @@ void SUNCGScene::parse_scene() {
     auto& shp = obj_.shapes[i];
     glm::vec3 label_color = get_color_by_shape_name(shp.name);
     glm::vec3 instance_color = rand_instance_colors[shp.original_index];
+    int instance_color_key = (int)instance_color.x * 256 * 256 + (int)instance_color.y * 256 + (int)instance_color.z;
+    instance_color_to_name_[instance_color_key] = shp.name;
+    instance_color /= 255.;
     tinyobj::mesh_t& tmesh = shp.mesh;
     int nr_face = tmesh.num_face_vertices.size();
     auto& matids = tmesh.material_ids;
