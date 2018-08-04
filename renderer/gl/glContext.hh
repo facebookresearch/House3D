@@ -49,6 +49,7 @@ class EGLContext : public GLContext {
 
   protected:
     EGLDisplay eglDpy_;
+    ::EGLContext eglCtx_;
 };
 
 // Context for GLX (OpenGL to X11)
@@ -59,6 +60,8 @@ class GLXHeadlessContext : public GLContext {
 
   protected:
     Display* dpy_;
+    GLXContext context_;
+    GLXPbuffer pbuffer_;
 };
 #endif
 

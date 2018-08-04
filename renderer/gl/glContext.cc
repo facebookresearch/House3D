@@ -207,9 +207,9 @@ EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
   checkError(succ);
 
   // 5. Create a context and make it current
-  ::EGLContext eglCtx = eglCreateContext(eglDpy_, eglCfg, (::EGLContext)0, NULL);
+  eglCtx_ = eglCreateContext(eglDpy_, eglCfg, (::EGLContext)0, NULL);
   checkError(succ);
-  succ = eglMakeCurrent(eglDpy_, eglSurf, eglSurf, eglCtx);
+  succ = eglMakeCurrent(eglDpy_, eglSurf, eglSurf, eglCtx_);
   if (!succ)
     error_exit("Failed to make EGL context current!");
   checkError(succ);
@@ -219,6 +219,12 @@ EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
 
 EGLContext::~EGLContext() {
   // 6. Terminate EGL when finished
+  eglMakeCurrent(
+      eglDpy_,
+      EGL_NO_SURFACE, EGL_NO_SURFACE,
+      // TODO macro expansion error
+      static_cast<::EGLContext>(0));
+  eglDestroyContext(eglDpy_, eglCtx_);
   eglTerminate(eglDpy_);
 }
 
@@ -237,19 +243,22 @@ GLXHeadlessContext::GLXHeadlessContext(Geometry win_size): GLContext{win_size} {
   static glXCreateContextAttribsARBProc glXCreateContextAttribsARB = NULL;
   glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc) glXGetProcAddressARB( (const GLubyte *) "glXCreateContextAttribsARB" );
 
-  GLXContext openGLContext = glXCreateContextAttribsARB(dpy_, fbc[0], 0, True, GLXcontextAttribs);
+  context_ = glXCreateContextAttribsARB(dpy_, fbc[0], 0, True, GLXcontextAttribs);
 
-  GLXPbuffer pbuffer = glXCreatePbuffer(dpy_, fbc[0], GLXpbufferAttribs);
+  pbuffer_ = glXCreatePbuffer(dpy_, fbc[0], GLXpbufferAttribs);
 
   XFree(fbc);
   XSync(dpy_, False);
-  if (!glXMakeContextCurrent(dpy_, pbuffer, pbuffer, openGLContext))
+  if (!glXMakeContextCurrent(dpy_, pbuffer_, pbuffer_, context_))
     error_exit("Cannot create GLX context!");
 
   this->init();
 }
 
 GLXHeadlessContext::~GLXHeadlessContext() {
+  glXMakeContextCurrent(dpy_, NULL, NULL, NULL);
+  glXDestroyContext(dpy_, context_);
+  glXDestroyPbuffer(dpy_, pbuffer_);
   XCloseDisplay(dpy_);
 }
 
