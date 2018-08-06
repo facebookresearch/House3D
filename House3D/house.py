@@ -115,7 +115,8 @@ class House(object):
                  CarpetHeight=0.15,
                  SetTarget=True,
                  ApproximateMovableMap=False,
-                 _IgnoreSmallHouse=False  # should be only set true when called by "cache_houses.py"
+                 _IgnoreSmallHouse=False,  # should be only set true when called by "cache_houses.py"
+                 DebugMessages=True
                  ):
         """Initialization and Robot Parameters
 
@@ -138,9 +139,11 @@ class House(object):
             CarpetHeight (double, optional): maximum height of the obstacles that agent can directly go through (gennerally should not be changed)
             SetTarget (bool, optional): whether or not to choose a default target room and pre-compute the valid locations
             ApproximateMovableMap (bool, optional): Fast initialization of valid locations which are not as accurate or fine-grained.  Requires OpenCV if true
+            DebugMessages=True (bool, optional): whether or not to show debug messages
         """
-        ts = time.time()
-        print('Data Loading ...')
+        if DebugMessages == True:
+            ts = time.time()
+            print('Data Loading ...')
 
         self.metaDataFile = MetaDataFile
         self.objFile = ObjFile
@@ -156,7 +159,7 @@ class House(object):
         if abs(house['scaleToMeters'] - 1.0) > 1e-8:
             print('[Error] Currently <scaleToMeters> must be 1.0!')
             assert(False)
-        if len(house['levels']) > 1:
+        if len(house['levels']) > 1 and DebugMessages == True:
             print('[Warning] Currently only support ground floor! <total floors = %d>' % (len(house['levels'])))
 
         self.level = level = house['levels'][0]  # only support ground floor now
@@ -178,57 +181,73 @@ class House(object):
                 self.all_desired_roomTypes.append(roomTp)
                 if self.default_roomTp is None: self.default_roomTp = roomTp
         assert self.default_roomTp is not None, 'Cannot Find Any Desired Rooms!'
-        print('>> Default Target Room Type Selected = {}'.format(self.default_roomTp))
 
-        print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
+        if DebugMessages == True:
+            print('>> Default Target Room Type Selected = {}'.format(self.default_roomTp))
+            print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
+
         if _IgnoreSmallHouse and ((len(self.all_desired_roomTypes) < 2) or ('kitchen' not in self.all_desired_roomTypes)):
             self.all_desired_roomTypes=[]
             return
 
-        print('Generating Low Resolution Obstacle Map ...')
-        ts = time.time()
+        if DebugMessages == True:
+            print('Generating Low Resolution Obstacle Map ...')
+            ts = time.time()
         # generate a low-resolution obstacle map
         self.tinyObsMap = np.ones((self.eagle_n_row, self.eagle_n_row), dtype=np.uint8)
         self.genObstacleMap(MetaDataFile, gen_debug_map=False, dest=self.tinyObsMap, n_row=self.eagle_n_row-1)
         self.eagleMap = np.zeros((4, self.eagle_n_row, self.eagle_n_row), dtype=np.uint8)
         self.eagleMap[0, ...] = self.tinyObsMap
-        print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
+
+        if DebugMessages == True:
+            print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
 
         # load from cache
         if CachedFile is not None:
             assert not DebugInfoOn, 'Please set DebugInfoOn=True when loading data from cached file!'
-            print('Loading Obstacle Map and Movability Map From Cache File ...')
-            ts = time.time()
+
+            if DebugMessages == True:
+                print('Loading Obstacle Map and Movability Map From Cache File ...')
+                ts = time.time()
             with open(CachedFile, 'rb') as f:
                 self.obsMap, self.moveMap = pickle.load(f)
-            print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
+
+            if DebugMessages == True:
+                print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
         else:
             # generate obstacle map
-            print('Generate High Resolution Obstacle Map (For Collision Check) ...')
-            ts = time.time()
+            if DebugMessages == True:
+                print('Generate High Resolution Obstacle Map (For Collision Check) ...')
+                ts = time.time()
             # obsMap was indexed by (x, y), not (y, x)
             self.obsMap = np.ones((self.n_row+1, self.n_row+1), dtype=np.uint8)  # a small int is enough
             if self._debugMap is not None:
                 self._debugMap = np.ones((self.n_row+1, self.n_row+1), dtype=np.float)
             self.genObstacleMap(MetaDataFile)
-            print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
-            # generate movability map for robots considering the radius
-            print('Generate Movability Map ...')
-            ts = time.time()
-            self.moveMap = np.zeros((self.n_row+1, self.n_row+1), dtype=np.int8)  # initially not movable
-            self.genMovableMap(ApproximateMovableMap)
-            print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
-
-            if StorageFile is not None:
-                print('Storing Obstacle Map and Movability Map to Cache File ...')
-                ts = time.time()
-                with open(StorageFile, 'wb') as f:
-                    pickle.dump([self.obsMap, self.moveMap], f)
+            if DebugMessages == True:
                 print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
 
+            # generate movability map for robots considering the radius
+            if DebugMessages == True:
+                print('Generate Movability Map ...')
+                ts = time.time()
+            self.moveMap = np.zeros((self.n_row+1, self.n_row+1), dtype=np.int8)  # initially not movable
+            self.genMovableMap(ApproximateMovableMap)
+            if DebugMessages == True:
+                print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
+
+            if StorageFile is not None:
+                if DebugMessages == True:
+                    print('Storing Obstacle Map and Movability Map to Cache File ...')
+                    ts = time.time()
+                with open(StorageFile, 'wb') as f:
+                    pickle.dump([self.obsMap, self.moveMap], f)
+                if DebugMessages == True:
+                    print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
+
         # set target room connectivity
-        print('Generate Target connectivity Map (Default <{}>) ...'.format(self.default_roomTp))
-        ts = time.time()
+        if DebugMessages == True:
+            ts = time.time()
         self.connMapDict = {}
         self.roomTypeLocMap = {}    # roomType -> feasible locations
         self.targetRoomTp = None
@@ -236,16 +255,21 @@ class House(object):
         self.connMap = None
         self.inroomDist = None
         if SetTarget:
+            if DebugMessages == True:
+                print('Generate Target connectivity Map (Default <{}>) ...'.format(self.default_roomTp))
             self.setTargetRoom(self.default_roomTp, _setEagleMap=True)
-        print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
+        if DebugMessages == True:
+            print('  --> Done! Elapsed = %.2fs' % (time.time()-ts))
 
         self.roomTypeMap = None
         if GenRoomTypeMap:
-            ts = time.time()
-            print('Generate Room Type Map ...')
+            if DebugMessages == True:
+                ts = time.time()
+                print('Generate Room Type Map ...')
             self.roomTypeMap = np.zeros((self.n_row+1, self.n_row+1), dtype=np.uint16)
             self._generate_room_type_map()
-            print('  --> Done! Elapsed = %.2fs' % (time.time() - ts))
+            if DebugMessages == True:
+                print('  --> Done! Elapsed = %.2fs' % (time.time() - ts))
 
 
     def _generate_room_type_map(self):
