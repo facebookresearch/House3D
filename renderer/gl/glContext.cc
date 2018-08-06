@@ -219,11 +219,6 @@ EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
 
 EGLContext::~EGLContext() {
   // 6. Terminate EGL when finished
-  eglMakeCurrent(
-      eglDpy_,
-      EGL_NO_SURFACE, EGL_NO_SURFACE,
-      // TODO macro expansion error
-      static_cast<::EGLContext>(0));
   eglDestroyContext(eglDpy_, eglCtx_);
   eglTerminate(eglDpy_);
 }
