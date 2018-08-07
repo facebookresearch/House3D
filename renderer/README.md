@@ -16,16 +16,16 @@ git submodule update
 # make sure your environment variables don't include paths you don't need
 
 # linux/macos, system python (or homebrew python on macos):
-make
-# or PYTHON_CONFIG=python3-config make
-# or PYTHON_CONFIG=python2-config make
+make -j
+# or PYTHON_CONFIG=python3-config make -j
+# or PYTHON_CONFIG=python2-config make -j
 # depend on the version of python you want to use
 
 # linux, anaconda:
-SYSTEM=conda.linux PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make
+SYSTEM=conda.linux PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make -j
 
 # macos, anaconda (upgrade anaconda if you see any compilation issues):
-SYSTEM=conda.macos PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make
+SYSTEM=conda.macos PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make -j
 # If using anaconda, you also need to add /path/to/anaconda/lib to LD_LIBRARY_PATH before running the renderer
 ```
 
@@ -45,8 +45,8 @@ cd /path/to/House3DRepo/tests
 export PYTHONPATH=..
 python test-rendering.py /path/to/suncg/house/house.obj
 ```
-Check `test-rendering.py` for the API usage. Read docstrings in 
-[suncg/render.hh](https://github.com/facebookresearch/House3D/blob/master/renderer/suncg/render.hh) 
+Check `test-rendering.py` for the API usage. Read docstrings in
+[suncg/render.hh](https://github.com/facebookresearch/House3D/blob/master/renderer/suncg/render.hh)
 for detailed explanation on the APIs.
 
 Example data can be found at [releases](https://github.com/facebookresearch/House3D/releases/tag/example-data).

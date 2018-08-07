@@ -12,6 +12,7 @@
 #include "lib/geometry.hh"
 #include "lib/debugutils.hh"
 #include "lib/mat.h"
+#include "lib/strutils.hh"
 #include "lib/imgproc.hh"
 
 namespace render {
@@ -36,8 +37,10 @@ class Framebuffer {
 
       glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-      if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        error_exit("ERROR::FRAMEBUFFER: Framebuffer is not complete!");
+      GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+      if (status != GL_FRAMEBUFFER_COMPLETE)
+        error_exit(
+          ssprintf("ERROR::FRAMEBUFFER: Framebuffer is not complete! ErrorCode=%d\n", status));
     }
 
     void bind() const { glBindFramebuffer(GL_FRAMEBUFFER, fbo); }
