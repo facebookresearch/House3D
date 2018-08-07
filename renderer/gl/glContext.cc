@@ -251,7 +251,7 @@ GLXHeadlessContext::GLXHeadlessContext(Geometry win_size): GLContext{win_size} {
 }
 
 GLXHeadlessContext::~GLXHeadlessContext() {
-  glXMakeContextCurrent(dpy_, NULL, NULL, NULL);
+  glXMakeContextCurrent(dpy_, GLXDrawable(NULL), GLXDrawable(NULL), NULL);
   glXDestroyContext(dpy_, context_);
   glXDestroyPbuffer(dpy_, pbuffer_);
   XCloseDisplay(dpy_);
