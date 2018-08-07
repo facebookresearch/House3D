@@ -26,35 +26,40 @@ def _vec_to_array(pos):
     return np.array([pos.x, pos.y, pos.z])
 
 
-def create_house(houseID, config, cachefile=None):
+def create_house(houseID, config, cachefile=None, ColideRes=1000):
     objFile = os.path.join(config['prefix'], houseID, 'house.obj')
     jsonFile = os.path.join(config['prefix'], houseID, 'house.json')
     assert (os.path.isfile(objFile) and os.path.isfile(jsonFile)), '[Environment] house objects not found! objFile=<{}>'.format(objFile)
+    crs = 1 if cr == 1000 else cr / 1000
     if cachefile is None:
-        cachefile = os.path.join(config['prefix'], houseID, 'cachedmap1k.pkl')
+        storagefile = None
+        cachefile = os.path.join(config['prefix'], houseID, 'cachedmap%sk.pkl' % str(crs))
     if not os.path.isfile(cachefile):
+        storagefile = os.path.join(config['prefix'], houseID, 'cachedmap%sk.pkl' % str(crs))
         cachefile = None
     house = House(jsonFile, objFile, config["modelCategoryFile"],
-                  CachedFile=cachefile, GenRoomTypeMap=True)
+                  CachedFile=cachefile, StorageFile=storagefile, GenRoomTypeMap=False,
+                  ColideRes=ColideRes)
     return house
 
-def local_create_house(h, config):
+def local_create_house(h, config, ColideRes=1000):
     if not isinstance(h, House):
-        h = create_house(h, config)
+        h = create_house(h, config, ColideRes=ColideRes)
     return h
 
 class Environment():
-    def __init__(self, api, house, config, seed=None):
+    def __init__(self, api, house, config, seed=None, ColideRes=1000):
         """
         Args:
             api: A RenderAPI or RenderAPIThread instance.
             house: either a house object or a house id
             config: configurations containing path to meta-data files
             seed: if not None, set the seed
+            ColideRes: resolution of the 2d map for collision checking
         """
         self.config = config
         if not isinstance(house, House):
-            house = create_house(house, config)
+            house = create_house(house, config, ColideRes=ColideRes)
         self.house = house
         if not hasattr(house, '_id'):
             house._id = 0
