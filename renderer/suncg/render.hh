@@ -128,7 +128,7 @@ class SUNCGRenderAPI {
 // Same as SUNCGRenderAPI, but delegates all methods to run on an independent thread, because OpenGL context is bound with thread.
 // As a result, you can do the following which is not allowed in SUNCGRenderAPI:
 // 1. Use the same instance in different threads.
-// 2. Create multiple instances in the same threads.
+// 2. Create multiple instances in one thread.
 // Note that this class is still NOT thread-safe. You cannot call its methods concurrently.
 class SUNCGRenderAPIThread {
   public:
@@ -139,6 +139,7 @@ class SUNCGRenderAPIThread {
     }
 
     ~SUNCGRenderAPIThread() {
+      // Destructor needs to run in a dedicated thread as well.
       exec_.execute_sync([=]() { api_.reset(nullptr); });
       exec_.stop();
     }

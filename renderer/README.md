@@ -104,10 +104,12 @@ Please tell us the following if you encounter any build issues or the code fails
 2. `undefined symbol: _ZTVNSt7__cxx1119basic_ostringstreamIcSt11char_traitsIcESaIcEEE` C++ ABI incompatibility.
 3. "dynamic module does not define init function": compile-time and run-time python version does not match.
 4. X server error: don't ssh with X forwarding. Make sure there is no "DISPLAY" environment variable.
-5. "Framebuffer is not complete!": `LD_LIBRARY_PATH` incorrectly set, causing
-   the binary to load a different OpenGL library at run time.
-6. "Framebuffer is not complete" after opening many instances of renderer: there seems to be a hard limit, depending on the hardwares,
-	on the number of rendering context you can use.
+5. "Framebuffer is not complete!". Possible reasons include:
+   + `LD_LIBRARY_PATH` incorrectly set, causing
+     the binary to load a different OpenGL library at run time.
+   + Open too many instances of renderer: 
+   An EGL context's GPU resources only get released when __all__ other EGL contexts within the process get destroyed.
+   The [corresponding issue](https://github.com/facebookresearch/House3D/issues/37) has more details.
 7. "[EGL] Detected 0 devices" or "Failed to get function pointer of eglQueryDevicesEXT": EGL not functioning. There could be multiple reasons:
    + Not linking against `libEGL.so` provided by nvidia driver.
    + GPU or driver does not support EGL.

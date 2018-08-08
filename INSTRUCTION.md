@@ -58,7 +58,8 @@ different houses, create more instances of `RenderAPI`.
 
 2. Multi-threading:
 
-As required by OpenGL, `objrender.RenderAPI` can only be used in the thread that creates it.
+As required by OpenGL, `objrender.RenderAPI` can only be used in the thread that
+creates it and each thread can only have one `RenderAPI` instance.
 To do multi-threading, use `objrender.RenderAPIThread`, which is compatible
 with `RenderAPI`, but safe to use in any thread. The APIs are compatible, but
 `RenderAPIThread` may be slightly slower.
