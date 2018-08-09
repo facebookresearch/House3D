@@ -10,6 +10,7 @@
 #undef INCLUDE_GL_CONTEXT_HEADERS
 #include "glContext.hh"
 #include <iostream>
+#include <atomic>
 
 #ifdef __linux__
 #include <sys/stat.h>
@@ -23,6 +24,8 @@
 using namespace std;
 
 namespace {
+
+std::atomic_int NUM_EGLCONTEXT_ALIVE{0};
 
 #ifdef __linux__
 const EGLint EGLconfigAttribs[] = {
@@ -127,6 +130,7 @@ GLFWContext::~GLFWContext() {
 #ifdef __linux__
 // https://devblogs.nvidia.com/parallelforall/egl-eye-opengl-visualization-without-x-server/
 EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
+  NUM_EGLCONTEXT_ALIVE.fetch_add(1);
   auto checkError = [](EGLBoolean succ) {
     EGLint err = eglGetError();
     if (err != EGL_SUCCESS)
@@ -218,6 +222,9 @@ EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
 }
 
 EGLContext::~EGLContext() {
+  int num_alive = NUM_EGLCONTEXT_ALIVE.fetch_sub(1);
+  // To debug https://github.com/facebookresearch/House3D/issues/37
+  // print_debug("Inside ~EGLContext, #alive contexts=%d\n", num_alive);
   // 6. Terminate EGL when finished
   eglDestroyContext(eglDpy_, eglCtx_);
   eglTerminate(eglDpy_);
