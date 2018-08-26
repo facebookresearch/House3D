@@ -6,7 +6,7 @@ In a nutshell, you need the following libraries:
 + a recent version of glfw3 and glm headers
 + x11 headers
 + python headers
-+ libglvnd (on certain systems)
++ libglvnd (needed on certain systems)
 
 The way to install these dependencies is different on various platforms.
 These are some platforms we've tested on:
@@ -14,6 +14,18 @@ These are some platforms we've tested on:
 ### Ubuntu 16.04
 ```
 apt install libglfw3-dev libglm-dev libx11-dev libegl1-mesa-dev libpng-dev libjpeg-dev
+```
+
+Install libglvnd (sometimes not necessary, but will be needed to resolve conflicts
+if multiple opengl libraries exist on your system):
+```bash
+cd SOME/DOWNLOAD_DIR/
+git clone https://github.com/NVIDIA/libglvnd && cd libglvnd
+./autogen.sh && ./configure --prefix=SOME/INSTALL_DIR --disable-egl
+# disable-egl is needed, to use libEGL that comes with the driver, but everything else from libglvnd
+make && make install
+# add INSTALL_DIR/lib/pkgconfig to PKG_CONFIG_PATH
+# add INSTALL_DIR/lib to LD_LIBRARY_PATH
 ```
 
 ### macOS
@@ -34,16 +46,7 @@ pacman -S glfw-x11 libglvnd glm libjpeg-turbo libpng mesa
 yum install libX11-devel glfw-devel glm-devel mesa-libGL-devel mesa-libEGL-devel libpng-devel libjpeg-devel autoconf automake libtool
 ```
 
-Install libglvnd:
-```bash
-cd SOME/DOWNLOAD_DIR/
-git clone https://github.com/NVIDIA/libglvnd && cd libglvnd
-./autogen.sh && ./configure --prefix=SOME/INSTALL_DIR --disable-egl
-# disable-egl is needed, to use libEGL that comes with the driver, but everything else from libglvnd
-make && make install
-# add INSTALL_DIR/lib/pkgconfig to PKG_CONFIG_PATH
-# add INSTALL_DIR/lib to LD_LIBRARY_PATH
-```
+Install libglvnd the same way as above.
 
 ### Ubuntu 14.04 with Nvidia GPU
 ```
@@ -69,7 +72,7 @@ unzip glm-0.9.8.4 && cd glm
 mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=SOME/INSTALL_DIR
 make && make install
 ```
-Later, remember to compile with `INCLUDE_DIR=-I/path/to/INSTALL_DIR/include make`.
+Later, remember to compile the renderer with `INCLUDE_DIR=-I/path/to/INSTALL_DIR/include make`.
 
 Install EGL headers (the headers in apt is too old):
 ```
@@ -83,4 +86,3 @@ Later, remember to compile `INCLUDE_DIR=-I/path/to/INSTALL_DIR make`.
 If multiple `INCLUDE_DIR` need to be added, use `INCLUDE_DIR=-I/path/one -I/path/two`.
 
 Install libglvnd the same way as above.
-

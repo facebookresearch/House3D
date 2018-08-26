@@ -92,22 +92,23 @@ It also scales well to multiple GPUs if used with the EGL backend.
 
 Please tell us the following if you encounter any build issues or the code fails to run:
 
-1. Your environment (hardware, OS, driver version), and how you build.
-2. `cd` to `renderer/` directory and run `./debug-build.sh`. Include the results in your issues.
-3. If you've successfully built some binaries, please include the output of the
+1. Your environment (hardware, OS, driver version).
+1. How you install dependencies and how you build (the commands).
+1. `cd` to `renderer/` directory and run `./debug-build.sh`. Include the results in your issues.
+1. If you've successfully built some binaries, please include the output of the
    two commands: `./test-rectangle.bin egl`, `./test-rectangle.bin headless`.
-4. Tell us what you observed by pasting them in full, not by describing them in abstract.
+1. Tell us what you observed by pasting them in full, not by describing them in abstract.
 
 
 ### Common Issues:
-1. `Assertion "glGetString(GL_VERSION)" FAILED`: try building with libglvnd as mentioned above.
+1. `Assertion "glGetString(GL_VERSION)" FAILED`: try building with libglvnd as mentioned in [dependencies](DEPENDENCIES.md).
 2. `undefined symbol: _ZTVNSt7__cxx1119basic_ostringstreamIcSt11char_traitsIcESaIcEEE` C++ ABI incompatibility.
 3. "dynamic module does not define init function": compile-time and run-time python version does not match.
 4. X server error: don't ssh with X forwarding. Make sure there is no "DISPLAY" environment variable.
 5. "Framebuffer is not complete!". Possible reasons include:
-   + `LD_LIBRARY_PATH` incorrectly set, causing
-     the binary to load a different OpenGL library at run time.
-   + Open too many instances of renderer: 
+   + `LD_LIBRARY_PATH` incorrectly set, causing the binary to load a different OpenGL library at run time.
+   + `ErrorCode=0`: try building with libglvnd as mentioned in [dependencies](DEPENDENCIES.md)
+   + `ErrorCode=36061`: Open too many instances of renderer: 
    An EGL context's GPU resources only get released when __all__ other EGL contexts within the process get destroyed.
    The [corresponding issue](https://github.com/facebookresearch/House3D/issues/37) has more details.
 7. "[EGL] Detected 0 devices" or "Failed to get function pointer of eglQueryDevicesEXT": EGL not functioning. There could be multiple reasons:
