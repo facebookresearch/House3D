@@ -38,3 +38,19 @@ In order to answer, the agent must first intelligently navigate to explore the e
 <p align="center">
 <img src="https://user-images.githubusercontent.com/1381301/33509618-f77bf844-d6b7-11e7-850a-b10ba6ef4a68.gif" align="middle" width="800" />
 </p>
+
+## Citation
+
+If you use our platform in your research, you can cite us with:
+```
+@article{wu2018building,
+  title={Building generalizable agents with a realistic and rich 3D environment},
+  author={Wu, Yi and Wu, Yuxin and Gkioxari, Georgia and Tian, Yuandong},
+  journal={arXiv preprint arXiv:1801.02209},
+  year={2018}
+}
+```
+
+## License
+
+House3D is released under the [Apache 2.0 license](LICENSE).
