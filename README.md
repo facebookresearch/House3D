@@ -28,7 +28,7 @@ due to the diverse and large-scale dataset.
 <img src="https://user-images.githubusercontent.com/1381301/33511103-ff5a71b4-d6c9-11e7-8f6d-95cc42e5b4e0.gif" align="middle" width="800" />
 </p>
 
-### B. Embodied QA ([project page](http://embodiedqa.org/) | [paper](https://arxiv.org/abs/1711.11543))
+### B. Embodied QA ([project page](http://embodiedqa.org/) | [EQA paper](https://arxiv.org/abs/1711.11543) | [NMC paper](https://arxiv.org/abs/1810.11181))
 
 *Abhishek Das, Samyak Datta, Georgia Gkioxari, Stefan Lee, Devi Parikh, Dhruv Batra*
 
