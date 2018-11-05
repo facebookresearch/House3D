@@ -82,6 +82,8 @@ class Framebuffer {
 
 class FramebufferScope {
   public:
+    // The caller must guarantee `fb` is alive
+    // during the lifetime of FramebufferScope
     explicit FramebufferScope(const Framebuffer& fb) :
       fb_{fb} { fb.bind(); }
 

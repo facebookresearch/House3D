@@ -93,11 +93,14 @@ It also scales well to multiple GPUs if used with the EGL backend.
 Please tell us the following if you encounter any build issues or the code fails to run:
 
 1. Your environment (hardware, OS, driver version).
-1. How you install dependencies and how you build (the commands).
+1. How you install dependencies and how you build (the commands you run).
+1. The __full__ error logs you observed.
 1. `cd` to `renderer/` directory and run `./debug-build.sh`. Include the results in your issues.
 1. If you've successfully built some binaries, please include the output of the
    two commands: `./test-rectangle.bin egl`, `./test-rectangle.bin headless`.
-1. Tell us what you observed by pasting them in full, not by describing them in abstract.
+
+Remember to tell us what you observed by pasting them in full, not by describing
+them with words.
 
 
 ### Common Issues:

@@ -38,11 +38,11 @@ const EGLint EGLconfigAttribs[] = {
   EGL_NONE
 };
 
-const EGLint EGLpbufferAttribs[] = {
-  EGL_WIDTH, 9,
-  EGL_HEIGHT, 9,
-  EGL_NONE,
-};
+// const EGLint EGLpbufferAttribs[] = {
+//   EGL_WIDTH, 9,
+//   EGL_HEIGHT, 9,
+//   EGL_NONE,
+// };
 
 
 bool check_nvidia_readable(int device) {
@@ -222,8 +222,8 @@ EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
 }
 
 EGLContext::~EGLContext() {
-  int num_alive = NUM_EGLCONTEXT_ALIVE.fetch_sub(1);
   // To debug https://github.com/facebookresearch/House3D/issues/37
+  // int num_alive = NUM_EGLCONTEXT_ALIVE.fetch_sub(1);
   // print_debug("Inside ~EGLContext, #alive contexts=%d\n", num_alive);
   // 6. Terminate EGL when finished
   eglDestroyContext(eglDpy_, eglCtx_);
