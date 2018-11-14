@@ -1,6 +1,7 @@
 FROM nvidia/opengl:1.0-glvnd-devel-ubuntu18.04
 # Note: this Dockerfile needs to be used with nvidia-docker
 # Note: needs nvidia/opengl. nvidia/cuda does not support opengl
+
 MAINTAINER Yuxin Wu
 
 # make apt-get noninteractive
@@ -34,6 +35,6 @@ WORKDIR /House3D
 RUN pip3 install -e .
 
 # test renderer
-# RUN cd /House3D/renderer ./objview-offline.bin $TEST_HOUSE
+# RUN cd /House3D/renderer && ./objview-offline.bin $TEST_HOUSE
 # test python API
-# RUN cd /House3D/renderer/tests && python3 test-rendering.py $TEST_HOUSE
+# RUN cd /House3D/tests && python3 test-rendering.py $TEST_HOUSE

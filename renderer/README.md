@@ -4,7 +4,6 @@
 We provided the [Dockerfile](../Dockerfile) to simplify the build process on Linux + Nvidia GPUs.
 Follow the instructions below if you want to build by your own.
 
-
 ## Build
 
 Build depends gcc >= 4.9 or clang. Check [DEPENDENCIES.md](DEPENDENCIES.md) to install the dependencies.
@@ -29,7 +28,7 @@ SYSTEM=conda.macos PYTHON_CONFIG=/path/to/anaconda/bin/python3-config make -j
 # If using anaconda, you also need to add /path/to/anaconda/lib to LD_LIBRARY_PATH before running the renderer
 ```
 
-## Use
+## Use The Renderer
 
 C++:
 ```
@@ -45,17 +44,13 @@ cd /path/to/House3DRepo/tests
 export PYTHONPATH=..
 python test-rendering.py /path/to/suncg/house/house.obj
 ```
-Check `test-rendering.py` for the API usage. Read docstrings in
-[suncg/render.hh](https://github.com/facebookresearch/House3D/blob/master/renderer/suncg/render.hh)
-for detailed explanation on the APIs.
-
 Example data can be found at [releases](https://github.com/facebookresearch/House3D/releases/tag/example-data).
 
 ## Choosing the Rendering Backend:
 
 Certain executables (e.g. `objview.bin`) use on-screen rendering, which requires
 a screen/display to show the images.
-`objview-offline.bin` and the Python API all use off-screen rendering, and has
+`objview-offline.bin` and the Python API both use off-screen rendering, and has
 the following two options on Linux:
 
 1. When the environment variable "DISPLAY" exists, the variable is used to
@@ -111,11 +106,11 @@ them with words.
 5. "Framebuffer is not complete!". Possible reasons include:
    + `LD_LIBRARY_PATH` incorrectly set, causing the binary to load a different OpenGL library at run time.
    + `ErrorCode=0`: try building with libglvnd as mentioned in [dependencies](DEPENDENCIES.md)
-   + `ErrorCode=36061`: Open too many instances of renderer: 
+   + `ErrorCode=36061`: Open too many instances of renderer:
    An EGL context's GPU resources only get released when __all__ other EGL contexts within the process get destroyed.
    The [corresponding issue](https://github.com/facebookresearch/House3D/issues/37) has more details.
 7. "[EGL] Detected 0 devices" or "Failed to get function pointer of eglQueryDevicesEXT": EGL not functioning. There could be multiple reasons:
-   + Not linking against `libEGL.so` provided by nvidia driver.
+   + Linking against a wrong `libEGL.so` instead of the one provided by nvidia driver. This is most likely.
    + GPU or driver does not support EGL.
    + Running inside container (e.g. docker) with an old driver may also result
      in such error.
