@@ -14,6 +14,7 @@ if __name__ == '__main__':
     cfg = load_config('config.json')
 
     env = Environment(api, '00065ecbdd7300d35ef4328ffe871505', cfg)
+    env.reset()  # put the agent into the house
 
     # fourcc = cv2.VideoWriter_fourcc(*'X264')
     # writer = cv2.VideoWriter('out.avi', fourcc, 30, (1200, 900))
