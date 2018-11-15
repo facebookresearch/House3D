@@ -6,7 +6,7 @@ Follow the instructions below if you want to build by your own.
 
 ## Build
 
-Build depends gcc >= 4.9 or clang. Check [DEPENDENCIES.md](DEPENDENCIES.md) to install the dependencies.
+Build depends g++ >= 4.9 or clang. Check [DEPENDENCIES.md](DEPENDENCIES.md) to install the dependencies.
 Then:
 
 ```bash

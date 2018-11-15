@@ -161,10 +161,12 @@ EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
         if (check_nvidia_readable(i))
           visible_devices.push_back(i);
       }
-    } else {
+    } else if (numDevices == 1) {
       // TODO we may still be using nvidia GPUs, but there is no way to tell.
       // But it's very rare that you'll start a docker and hide the only one GPU from it.
       visible_devices.push_back(0);
+    } else {
+      error_exit("eglQueryDevicesEXT() cannot find any EGL devices!")
     }
 
     if (device >= static_cast<int>(visible_devices.size())) {
