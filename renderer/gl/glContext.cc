@@ -166,7 +166,7 @@ EGLContext::EGLContext(Geometry win_size, int device): GLContext{win_size} {
       // But it's very rare that you'll start a docker and hide the only one GPU from it.
       visible_devices.push_back(0);
     } else {
-      error_exit("eglQueryDevicesEXT() cannot find any EGL devices!")
+      error_exit("[EGL] eglQueryDevicesEXT() cannot find any EGL devices!");
     }
 
     if (device >= static_cast<int>(visible_devices.size())) {

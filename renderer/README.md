@@ -109,7 +109,7 @@ them with words.
    + `ErrorCode=36061`: Open too many instances of renderer:
    An EGL context's GPU resources only get released when __all__ other EGL contexts within the process get destroyed.
    The [corresponding issue](https://github.com/facebookresearch/House3D/issues/37) has more details.
-7. "[EGL] Detected 0 devices" or "Failed to get function pointer of eglQueryDevicesEXT": EGL not functioning. There could be multiple reasons:
+7. "[EGL] eglQueryDevicesEXT() cannot find any EGL devices" or "Failed to get function pointer of eglQueryDevicesEXT": EGL not functioning. There could be multiple reasons:
    + Linking against a wrong `libEGL.so` instead of the one provided by nvidia driver. This is most likely.
    + GPU or driver does not support EGL.
    + Running inside container (e.g. docker) with an old driver may also result
