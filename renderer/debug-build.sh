@@ -31,6 +31,9 @@ $PYTHONPATH"
 echo
 PYCONFIG=${PYTHON_CONFIG:-python-config}
 
+echo "ldconfig:"
+ldconfig -p | grep EGL
+
 ##### Flags:
 set -x
 pkg-config --cflags --libs glfw3
