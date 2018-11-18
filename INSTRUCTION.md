@@ -27,18 +27,23 @@ House3D runs on Linux/MacOS with or without Nvidia GPUs.
 
 ### Use Dockerfile:
 If you're on a Linux with Nvidia GPUs,
-we recommend trying the [Dockerfile](Dockerfile) to run House3D,
-so you don't have to worry about the build process. To use the docker file, you need to have
-`nvidia-docker`, then run:
+we recommend using the [Dockerfile](Dockerfile) to run House3D,
+so you don't have to worry about the build process.
+To use the docker file, you need to install `nvidia-docker`, then run:
 
 ```bash
+# If this command cannot find `libEGL_nvidia`, your driver installation is incomplete.
+nvidia-container-cli list -l | grep libEGL_nvidia 
+# Build the docker
 docker build -t house3d:v0 .
-xhost local:root     # run this command only if you need to use GUI within docker
+# Run this command only if you need to use GUI within docker
+xhost local:root
+# Start the container
 nvidia-docker run -it --name house3d --net=host \
     --env="DISPLAY" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
 		house3d:v0
 # the "env" and "volume" options are only useful if you need to use GUI within docker
-# Now you should be inside the docker and House3D is ready to use. You can:
+# Now you should be inside the container and House3D is ready to use. You can:
 
 cd /House3D/renderer && ./objview-offline.bin $TEST_HOUSE   # offline rendering, produce an image file
 cd /House3D/tests && python3 test-rendering.py $TEST_HOUSE --interactive  # interactive rendering with GUI

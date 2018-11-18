@@ -9,6 +9,9 @@ In a nutshell, you need the following libraries:
 + libglvnd (needed on certain systems)
 
 The way to install these dependencies is different on various platforms.
+For people not familiar enough with Linux, they are not easy to install manually.
+That's why we recommend using docker to avoid the build process.
+
 These are some platforms we've tested on:
 
 ### Ubuntu 16.04
@@ -49,7 +52,7 @@ yum install libX11-devel glfw-devel glm-devel mesa-libGL-devel mesa-libEGL-devel
 Install libglvnd the same way as above.
 
 ### Ubuntu 14.04 with Nvidia GPU
-```
+```bash
 apt install libx11-dev libegl1-mesa-dev libpng-dev libjpeg-dev
 ```
 
@@ -76,13 +79,13 @@ Later, remember to compile the renderer with `INCLUDE_DIR=-I/path/to/INSTALL_DIR
 
 Install EGL headers (the headers in apt is too old):
 ```
-cd INSTALL_DIR
+cd SOME/INSTALL_DIR
 wget -P EGL https://www.khronos.org/registry/EGL/api/EGL/egl.h
 wget -P EGL https://www.khronos.org/registry/EGL/api/EGL/eglext.h
 wget -P EGL https://www.khronos.org/registry/EGL/api/EGL/eglplatform.h
 ```
 Later, remember to compile `INCLUDE_DIR=-I/path/to/INSTALL_DIR make`.
 
-If multiple `INCLUDE_DIR` need to be added, use `INCLUDE_DIR=-I/path/one -I/path/two`.
+If multiple `INCLUDE_DIR` need to be added, use `INCLUDE_DIR="-I/path/one -I/path/two"`.
 
 Install libglvnd the same way as above.
