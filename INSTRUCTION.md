@@ -78,7 +78,7 @@ The list can be found [here](https://github.com/facebookresearch/House3D/release
 
 1. Rendering many houses in parallel:
 
-A `RenderAPI` can only render the house specified by `api.loadScene`. To render
+A `RenderAPI` can only render the one house specified by `api.loadScene`. To render
 different houses, create more instances of `RenderAPI`.
 
 2. Multi-threading:
