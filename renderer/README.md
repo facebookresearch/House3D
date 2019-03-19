@@ -44,7 +44,6 @@ cd /path/to/House3DRepo/tests
 export PYTHONPATH=..
 python test-rendering.py /path/to/suncg/house/house.obj
 ```
-Example data can be found at [releases](https://github.com/facebookresearch/House3D/releases/tag/example-data).
 
 ## Choosing the Rendering Backend:
 

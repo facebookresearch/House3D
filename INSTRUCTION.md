@@ -19,8 +19,6 @@ SUNCG/
     *.jpg
 ```
 
-Example data (one house) can be downloaded at [release](https://github.com/facebookresearch/House3D/releases/tag/example-data).
-
 ## Installation:
 
 House3D runs on Linux/MacOS with or without Nvidia GPUs.
@@ -33,7 +31,7 @@ To use the docker file, you need to install `nvidia-docker`, then run:
 
 ```bash
 # If this command cannot find `libEGL_nvidia`, your driver installation is incomplete.
-nvidia-container-cli list -l | grep libEGL_nvidia 
+nvidia-container-cli list -l | grep libEGL_nvidia
 # Build the docker
 docker build -t house3d:v0 .
 # Run this command only if you need to use GUI within docker

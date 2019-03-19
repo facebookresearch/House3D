@@ -6,7 +6,7 @@
 <p align="center"><img src="https://user-images.githubusercontent.com/1381301/33509559-87c4e470-d6b7-11e7-8266-27c940d5729a.jpg" align="middle" width="600" /></p>
 
 House3D is a virtual 3D environment which consists of thousands of indoor scenes equipped with
-a diverse set of scene types, layouts and objects sourced from the [SUNCG dataset](http://suncg.cs.princeton.edu/).
+a diverse set of scene types, layouts and objects sourced from the [SUNCG dataset](https://arxiv.org/abs/1611.08974).
 It consists of over 45k indoor 3D scenes, ranging from studios to two-storied houses
 with swimming pools and fitness rooms. All 3D objects are fully annotated with category labels.
 Agents in the environment have access to observations of multiple modalities, including RGB images,
