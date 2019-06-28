@@ -60,9 +60,10 @@ the following two options on Linux:
        will be used. On machines with >1 GPUs, it can only use the one connected to the X11 server.
      + If not (e.g. xvfb, vnc), software rendering (mesa) will be used with a
        very low framerate.
-   + Certain types of X session (e.g. a ssh-forwarded X session, a VNC session) may not
+   + Certain types of X session (e.g. a ssh-forwarded X session, a VNC session, a session inside docker) may not
      support the necessary render features needed.
-     If you are under a SSH session with X forwarding, make sure to
+		 On Linux, you can use `./test-rectangle.bin headless` to test the availability of GLX backend.
+     If not available, make sure to
      `unset DISPLAY` to disable the GLX backend.
 
 2. Otherwise, it will use the __EGL rendering backend__, which requires a decent Nvidia GPU.
@@ -89,7 +90,7 @@ Please tell us the following if you encounter any build issues or the code fails
 1. Your environment (hardware, OS, driver version).
 1. How you install dependencies and how you build (the commands you run).
 1. The __full__ error logs you observed.
-1. `cd` to `renderer/` directory and run `./debug-build.sh`. Include the results in your issues.
+1. After bulid, `cd` to `renderer/` directory and run `./debug-build.sh`. Include the results in your issue.
 1. If you've successfully built some binaries, please include the output of the
    two commands: `./test-rectangle.bin egl`, `./test-rectangle.bin headless`.
 
