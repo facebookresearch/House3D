@@ -33,6 +33,8 @@ $LD_LIBRARY_PATH"
 echo
 echo "PYTHONPATH:
 $PYTHONPATH"
+echo "DISPLAY:
+$DISPLAY"
 echo
 PYCONFIG=${PYTHON_CONFIG:-python-config}
 
