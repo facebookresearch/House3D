@@ -9,7 +9,7 @@
 
 ```
 SUNCG/
-  house
+  house/
     00065ecbdd7300d35ef4328ffe871505/
       house.json
       house.mtl
@@ -17,6 +17,11 @@ SUNCG/
     ...
   texture/
     *.jpg
+	object/
+	  101/
+		  101.mtl
+			101.obj
+		...
 ```
 
 ## Installation:

@@ -20,7 +20,7 @@ RUN pip3 install tqdm
 
 # update git
 RUN git clone --recursive https://github.com/facebookresearch/House3D /House3D
-ENV TEST_HOUSE /path/to/some/house
+ENV TEST_HOUSE /path/to/some/house.obj
 
 # build renderer
 WORKDIR /House3D/renderer
