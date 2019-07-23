@@ -86,6 +86,11 @@ inline GLContext* createHeadlessContext(Geometry win_size, int device=0) {
   return new CGLHeadlessContext{win_size};
 #endif
 #ifdef __linux__
+
+  char* force_egl = std::getenv("HOUSE3D_FORCE_EGL");
+  if (force_egl != nullptr && std::atoi(force_egl) == 1)
+    return new EGLContext{win_size, device};
+
   // prefer GLX (better compatibility with GPUs) when device=0
   if (device == 0 and std::getenv("DISPLAY") != nullptr)
       return new GLXHeadlessContext{win_size};

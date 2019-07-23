@@ -25,6 +25,7 @@ if __name__ == '__main__':
     cfg = create_default_config('.')
 
     api = objrender.RenderAPI(args.width, args.height, device=args.device)
+
     api.printContextInfo()
 
     api.loadScene(args.obj, cfg['modelCategoryFile'], cfg['colorFile'])

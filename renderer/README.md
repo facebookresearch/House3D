@@ -66,9 +66,11 @@ the following two options on Linux:
      If not available, make sure to
      `unset DISPLAY` to disable the GLX backend.
 
-2. Otherwise, it will use the __EGL rendering backend__, which requires a decent Nvidia GPU.
+2. Otherwise, it will use the __EGL rendering backend__, which requires a decent Nvidia GPU & driver.
    It also has the option to choose which GPU to use, therefore you can run
    multiple rendering instances on __multiple GPUs__.
+
+	 You can also force the use of EGL backend (regardless of `DISPLAY`) by `export HOUSE3D_FORCE_EGL=1`.
 
 On Mac, it will always use the CGL backend.
 
@@ -100,17 +102,17 @@ them with words.
 
 ### Common Issues:
 1. `Assertion "glGetString(GL_VERSION)" FAILED`: try building with libglvnd as mentioned in [dependencies](DEPENDENCIES.md).
-2. `undefined symbol: _ZTVNSt7__cxx1119basic_ostringstreamIcSt11char_traitsIcESaIcEEE` C++ ABI incompatibility.
+2. `undefined symbol: _ZTVNSt7__cxx1119basic_ostringstreamIcSt11char_traitsIcESaIcEEE`: C++ ABI incompatibility.
 3. "dynamic module does not define init function": compile-time and run-time python version does not match.
 4. X server error: don't ssh with X forwarding. Make sure there is no "DISPLAY" environment variable.
 5. "Framebuffer is not complete!". Possible reasons include:
    + `LD_LIBRARY_PATH` incorrectly set, causing the binary to load a different OpenGL library at run time.
    + `ErrorCode=0`: try building with libglvnd as mentioned in [dependencies](DEPENDENCIES.md)
-   + `ErrorCode=36061`: Open too many instances of renderer:
-   An EGL context's GPU resources only get released when __all__ other EGL contexts within the process get destroyed.
-   The [corresponding issue](https://github.com/facebookresearch/House3D/issues/37) has more details.
+   + `ErrorCode=36061` with GLX backend inside docker or ssh: your X session does not support required GLX features. Use EGL instead.
+   + `ErrorCode=36061`: when open too many instances of renderer:
+		 A driver bug. The [corresponding issue](https://github.com/facebookresearch/House3D/issues/37) has more details.
 7. "[EGL] eglQueryDevicesEXT() cannot find any EGL devices" or "Failed to get function pointer of eglQueryDevicesEXT": EGL not functioning. There could be multiple reasons:
    + Linking against a wrong `libEGL.so` instead of the one provided by nvidia driver. This is most likely.
    + GPU or driver does not support EGL.
-   + Running inside container (e.g. docker) with an old driver may also result
-     in such error.
+   + Running inside container (e.g. docker) with an old driver may also result in such error.
+	 + Driver not fully installed: did not include the vendor file (typically in `/etc/glvnd/egl_vendor.d`) for libglvnd.
