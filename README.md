@@ -1,6 +1,5 @@
 # House3D: A Rich and Realistic 3D Environment
 #### [Yi Wu](https://jxwuyi.weebly.com/), [Yuxin Wu](https://github.com/ppwwyyxx), [Georgia Gkioxari](https://gkioxari.github.io/) and [Yuandong Tian](http://yuandong-tian.com/)
-*For questions regarding House3D contact Yuxin Wu*
 #
 
 <p align="center"><img src="https://user-images.githubusercontent.com/1381301/33509559-87c4e470-d6b7-11e7-8266-27c940d5729a.jpg" align="middle" width="600" /></p>
