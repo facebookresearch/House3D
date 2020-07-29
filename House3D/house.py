@@ -344,54 +344,6 @@ class House(object):
         return ret_comps
 
     """
-    Sets self.connMap to distances to target point with some margin
-    """
-    def setTargetPoint(self, x, y, margin_x=15, margin_y=15):
-        self.connMap = connMap = np.ones((self.n_row+1, self.n_row+1), dtype=np.int32) * -1
-        self.inroomDist = inroomDist = np.ones((self.n_row+1, self.n_row+1), dtype=np.float32) * -1
-        dirs = [[0, 1], [1, 0], [-1, 0], [0, -1]]
-
-        x1, y1, x2, y2 = x-margin_x, y-margin_y, x+margin_x, y+margin_y
-        _x, _y = self.to_coor(x, y)
-
-        curr_components = self._find_components(x1, y1, x2, y2, dirs=dirs, return_open=True)
-        if len(curr_components) == 0:
-            return False
-
-        que = []
-        if isinstance(curr_components[0], list):  # join all the coors in the open components
-            curr_major_coors = list(itertools.chain(*curr_components))
-        else:
-            curr_major_coors = curr_components
-        min_dist_to_center = 1e50
-        for xx, yy in curr_major_coors:
-            connMap[xx, yy] = 0
-            que.append((xx, yy))
-            tx, ty = self.to_coor(xx, yy)
-            tdist = np.sqrt((tx - _x) ** 2 + (ty - _y) ** 2)
-            if tdist < min_dist_to_center:
-                min_dist_to_center = tdist
-            inroomDist[xx, yy] = tdist
-        for xx, yy in curr_major_coors:
-            inroomDist[xx, yy] -= min_dist_to_center
-
-        ptr = 0
-        self.maxConnDist = 1
-        while ptr < len(que):
-            xx, yy = que[ptr]
-            cur_dist = connMap[xx, yy]
-            ptr += 1
-            for dx, dy in dirs:
-                tx, ty = xx+dx, yy+dy
-                if self.inside(tx,ty) and self.canMove(tx,ty) and not self.isConnect(tx, ty):
-                    que.append((tx,ty))
-                    connMap[tx,ty] = cur_dist + 1
-                    if cur_dist + 1 > self.maxConnDist:
-                        self.maxConnDist = cur_dist + 1
-
-        return True
-
-    """
     set the distance to a particular room type
     """
     def setTargetRoom(self, targetRoomTp = 'kitchen', _setEagleMap = False):
